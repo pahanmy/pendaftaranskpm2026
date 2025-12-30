@@ -25,7 +25,7 @@
         .doc-list { padding-left: 25px; margin: 0; }
         .doc-list li { margin-bottom: 5px; }
         
-        select { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; margin-top: 5px; background-color: #fff; }
+        select, input[type="text"] { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; margin-top: 5px; background-color: #fff; box-sizing: border-box; }
         
         .fee-list { list-style: none; padding: 0; margin: 0; }
         .fee-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 0; border-bottom: 1px solid #f3f4f6; }
@@ -93,6 +93,12 @@
                 </ul>
             </div>
 
+            <!-- Input Nama Murid -->
+            <div class="card">
+                <label><strong>Nama Penuh Murid:</strong></label>
+                <input type="text" id="student-name" placeholder="TAIP NAMA PENUH MURID DI SINI" oninput="this.value = this.value.toUpperCase()" style="font-weight:bold; color:#0d3b66;">
+            </div>
+
             <div class="card">
                 <label><strong>Pilih Kelas Anak:</strong></label>
                 <select id="grade-select" onchange="loadData()">
@@ -113,7 +119,7 @@
                     <strong>⚠️ Pemakluman:</strong><br>
                     Semua maklumat ini disediakan untuk anggaran keperluan sesi 2026. Tertakluk kepada perubahan. Bayaran rasmi dibuat di kaunter sekolah.
                 </div>
-                <button onclick="captureScreenshot()" class="btn-export" id="btn-export-img">📸 Simpan Sebagai Gambar</button>
+                <button onclick="captureScreenshot()" class="btn-export" id="btn-export-img">📸 Simpan Tempahan (Gambar)</button>
             </div>
         </div>
     </div>
@@ -128,12 +134,27 @@
         const app = initializeApp(firebaseConfig);
 
         const commonFees = [
-            { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja (Kaunter PIBG)" },
-            { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid" },
+            { 
+                name: "Sumbangan PIBG", 
+                price: 30.00, 
+                required: true, 
+                note: "Satu keluarga sahaja. Dana ini penting untuk membiayai program kecemerlangan akademik, aktiviti sukan, serta penyelenggaraan fasiliti demi keselesaan murid." 
+            },
+            { 
+                name: "Sumbangan Keceriaan Kelas", 
+                price: 10.00, 
+                required: true, 
+                note: "Setiap murid. Digunakan untuk pembelian alas meja, bahan hiasan papan kenyataan, dan mewujudkan suasana pembelajaran yang ceria dan kondusif." 
+            },
             { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false },
             { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false },
             { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan" },
-            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Jualan kedai luar" }
+            { 
+                name: "Buku & Alat Tulis", 
+                price: 0.00, 
+                required: false, 
+                note: "Ada jualan dari kedai di sekolah. Jika hendak order awal boleh membuat tempahan di sini terus." 
+            }
         ];
 
         const defaultData = { "pra": commonFees, "tahap1": commonFees, "tahap2": commonFees };
@@ -187,6 +208,7 @@
                 
                 let extraHtml = item.note ? `<span class="item-note">${item.note}</span>` : '';
 
+                // PAPARKAN SENARAI BUKU JIKA ADA
                 if (item.bookList && item.bookList.length > 0) {
                     extraHtml += `<ul class="sub-book-list">`;
                     item.bookList.forEach(b => {
@@ -230,7 +252,7 @@
             
             html2canvas(captureElement, { useCORS: true, scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'senarai-yuran-skpm-2026.png';
+                link.download = 'tempahan-yuran-skpm-2026.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 exportBtn.style.display = 'block';

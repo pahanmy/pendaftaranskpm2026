@@ -98,7 +98,6 @@
         
         .btn-delete { background: #d32f2f; color: white; padding: 6px 12px; font-size: 0.85rem; margin-left: 5px;}
         .btn-edit { background: #F57C00; color: white; padding: 6px 12px; font-size: 0.85rem; }
-        .btn-reset { background: #546e7a; color: white; margin-top: 15px; width: 100%; }
         
         .btn-add-sub { background: #0288d1; color: white; padding: 8px 15px; width: 100%; margin-top: 10px; }
 
@@ -219,16 +218,27 @@
         </table>
 
         <button class="btn-save" onclick="saveToStorage()">💾 SIMPAN PERUBAHAN</button>
-        <button class="btn-reset" onclick="resetDefault()">↺ Reset Data Asal</button>
     </div>
 
     <script>
-        // Data Default
+        // Data Default (Kini dikemaskini dengan huraian terperinci)
         const commonFees = [
-            { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja" },
-            { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid" },
-            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false },
-            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false }
+            { 
+                name: "Sumbangan PIBG", 
+                price: 30.00, 
+                required: true, 
+                note: "Satu keluarga sahaja. Dana ini penting untuk membiayai program kecemerlangan akademik, aktiviti sukan, serta penyelenggaraan fasiliti demi keselesaan murid." 
+            },
+            { 
+                name: "Sumbangan Keceriaan Kelas", 
+                price: 10.00, 
+                required: true, 
+                note: "Setiap murid. Digunakan untuk pembelian alas meja, bahan hiasan papan kenyataan, dan mewujudkan suasana pembelajaran yang ceria dan kondusif." 
+            },
+            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
+            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
+            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)" },
+            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Ada jualan dari kedai luar pada hari pendaftaran" }
         ];
 
         const defaultData = {
@@ -450,13 +460,6 @@
         function saveToStorage() {
             localStorage.setItem('schoolFeesData', JSON.stringify(currentData));
             alert("✅ Disimpan! Sila buka halaman utama untuk lihat perubahan.");
-        }
-
-        function resetDefault() {
-            if (confirm("Reset ke data asal?")) {
-                localStorage.removeItem('schoolFeesData');
-                location.reload();
-            }
         }
 
         window.onload = init;

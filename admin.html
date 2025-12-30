@@ -49,9 +49,15 @@
         }
         button:hover { opacity: 0.9; }
 
-        .btn-add { background: #2E7D32; color: white; width: 100%; }
+        .btn-add { background: #2E7D32; color: white; flex: 2; }
+        .btn-update { background: #E65100; color: white; flex: 2; } /* Warna Oren untuk Update */
+        .btn-cancel { background: #78909c; color: white; flex: 1; display: none; } /* Hidden by default */
+        
         .btn-save { background: #1565C0; color: white; font-size: 1.1rem; width: 100%; margin-top: 30px; padding: 15px; }
-        .btn-delete { background: #d32f2f; color: white; padding: 6px 12px; font-size: 0.85rem; }
+        
+        .btn-delete { background: #d32f2f; color: white; padding: 6px 12px; font-size: 0.85rem; margin-left: 5px;}
+        .btn-edit { background: #F57C00; color: white; padding: 6px 12px; font-size: 0.85rem; }
+
         .btn-reset { background: #546e7a; color: white; margin-top: 15px; width: 100%; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
@@ -74,7 +80,7 @@
         <div class="control-panel">
             <div class="form-group">
                 <label>1. Pilih Kategori untuk diedit:</label>
-                <select id="admin-grade" onchange="renderAdminList()">
+                <select id="admin-grade" onchange="handleGradeChange()">
                     <option value="pra">Prasekolah</option>
                     <option value="tahap1">Tahap 1 (Tahun 1, 2, 3)</option>
                     <option value="tahap2">Tahap 2 (Tahun 4, 5, 6)</option>
@@ -82,7 +88,7 @@
             </div>
 
             <div class="form-group" style="border-top:1px solid #ffcdd2; padding-top:20px;">
-                <label>2. Tambah Item Baru:</label>
+                <label id="form-title">2. Tambah Item Baru:</label>
                 <div style="display:flex; gap:10px; flex-wrap: wrap;">
                     <div style="flex: 2; min-width: 200px;">
                         <input type="text" id="new-name" placeholder="Nama Item (cth: Van Sekolah)">
@@ -100,7 +106,12 @@
                 <div style="margin-top: 10px;">
                     <input type="text" id="new-note" placeholder="Nota Kecil (pilihan) - cth: Bayar di kedai buku">
                 </div>
-                <button class="btn-add" onclick="addItem()" style="margin-top:10px;">+ Tambah Ke Senarai</button>
+                
+                <!-- Butang Kawalan Form -->
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button id="btn-submit" class="btn-add" onclick="processForm()">+ Tambah Ke Senarai</button>
+                    <button id="btn-cancel" class="btn-cancel" onclick="cancelEdit()">Batal</button>
+                </div>
             </div>
         </div>
 
@@ -148,6 +159,10 @@
         };
 
         let currentData = {};
+        
+        // Variables untuk Edit Mode
+        let editMode = false;
+        let editIndex = null;
 
         // 1. Mula: Load data
         function init() {
@@ -162,6 +177,12 @@
             } else {
                 currentData = JSON.parse(JSON.stringify(defaultData));
             }
+            renderAdminList();
+        }
+
+        // Handle bila dropdown kategori ditukar
+        function handleGradeChange() {
+            cancelEdit(); // Reset form jika tukar kategori
             renderAdminList();
         }
 
@@ -197,20 +218,20 @@
                         </td>
                         <td><span class="${tagClass}">${tagText}</span></td>
                         <td style="font-weight:bold; color:#0d3b66;">${priceDisplay}</td>
-                        <td>
+                        <td style="min-width: 140px;">
+                            <button class="btn-edit" onclick="startEdit('${grade}', ${index})">Edit</button>
                             <button class="btn-delete" onclick="deleteItem('${grade}', ${index})">Hapus</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
                 });
             } else {
-                // Jika data rosak/kosong
                 currentData[grade] = []; 
             }
         }
 
-        // 3. Tambah Item
-        function addItem() {
+        // 3. Proses Form (Tambah atau Update)
+        function processForm() {
             const grade = document.getElementById('admin-grade').value;
             const name = document.getElementById('new-name').value.trim();
             const priceVal = document.getElementById('new-price').value;
@@ -229,38 +250,98 @@
 
             if (!currentData[grade]) currentData[grade] = [];
 
-            currentData[grade].push({ 
-                name: name, 
-                price: price, 
-                required: required,
-                note: note 
-            });
-            
-            // Clear input
-            document.getElementById('new-name').value = '';
-            document.getElementById('new-price').value = '';
-            document.getElementById('new-note').value = '';
+            if (editMode && editIndex !== null) {
+                // LOGIC UPDATE
+                currentData[grade][editIndex] = {
+                    name: name, 
+                    price: price, 
+                    required: required,
+                    note: note
+                };
+                alert("Item berjaya dikemaskini.");
+                cancelEdit(); // Reset form dan mode
+            } else {
+                // LOGIC TAMBAH BARU
+                currentData[grade].push({ 
+                    name: name, 
+                    price: price, 
+                    required: required,
+                    note: note 
+                });
+                // Clear input manual
+                document.getElementById('new-name').value = '';
+                document.getElementById('new-price').value = '';
+                document.getElementById('new-note').value = '';
+            }
             
             renderAdminList();
         }
 
-        // 4. Hapus Item
+        // 4. Mula Edit
+        function startEdit(grade, index) {
+            const item = currentData[grade][index];
+            
+            // Masukkan data ke dalam form
+            document.getElementById('new-name').value = item.name;
+            document.getElementById('new-price').value = item.price;
+            document.getElementById('new-required').value = item.required.toString();
+            document.getElementById('new-note').value = item.note || '';
+            
+            // Ubah UI
+            editMode = true;
+            editIndex = index;
+            
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.innerText = "✓ Simpan Kemaskini";
+            btnSubmit.className = "btn-update"; // Tukar warna ke oren
+            
+            document.getElementById('btn-cancel').style.display = "block";
+            document.getElementById('form-title').innerText = "2. Kemaskini Item:";
+            
+            // Scroll ke atas sikit supaya nampak form
+            document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 5. Batal Edit
+        function cancelEdit() {
+            editMode = false;
+            editIndex = null;
+            
+            // Clear form
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+            document.getElementById('new-note').value = '';
+            
+            // Reset UI
+            const btnSubmit = document.getElementById('btn-submit');
+            btnSubmit.innerText = "+ Tambah Ke Senarai";
+            btnSubmit.className = "btn-add"; // Tukar warna ke hijau
+            
+            document.getElementById('btn-cancel').style.display = "none";
+            document.getElementById('form-title').innerText = "2. Tambah Item Baru:";
+        }
+
+        // 6. Hapus Item
         function deleteItem(grade, index) {
             if (confirm("Adakah anda pasti mahu membuang item ini?")) {
                 currentData[grade].splice(index, 1);
+                // Jika kita sedang edit item yang dihapus, batalkan edit
+                if (editMode && editIndex === index) {
+                    cancelEdit();
+                }
                 renderAdminList();
             }
         }
 
-        // 5. Simpan ke Local Storage
+        // 7. Simpan ke Local Storage
         function saveToStorage() {
             localStorage.setItem('schoolFeesData', JSON.stringify(currentData));
             alert("✅ Berjaya disimpan!\n\nPerubahan kini aktif di halaman utama (index.html) pada pelayar ini.");
         }
 
-        // 6. Reset Data
+        // 8. Reset Data
         function resetDefault() {
-            if (confirm("Amaran: Ini akan memadam semua perubahan anda dan kembali kepada data asal 2026 (termasuk kemaskini alat tulis). Teruskan?")) {
+            if (confirm("Amaran: Ini akan memadam semua perubahan anda dan kembali kepada data asal 2026. Teruskan?")) {
                 localStorage.removeItem('schoolFeesData');
                 location.reload();
             }

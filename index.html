@@ -63,6 +63,13 @@
             background-color: #e3f2fd;
             border: 1px solid #bbdefb;
         }
+
+        /* Style khas untuk kad dokumen */
+        .doc-card {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+        }
         
         .info-row {
             display: flex;
@@ -73,6 +80,14 @@
         }
         .info-row:last-child { margin-bottom: 0; }
         .info-icon { font-size: 1.4rem; min-width: 30px; text-align: center; }
+
+        .doc-list {
+            padding-left: 25px;
+            margin: 0;
+        }
+        .doc-list li {
+            margin-bottom: 5px;
+        }
 
         select {
             width: 100%;
@@ -181,10 +196,10 @@
         .disclaimer-box {
             margin-top: 25px;
             padding: 15px;
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
             border-radius: 8px;
-            color: #856404;
+            color: #6c757d;
             font-size: 0.85rem;
             text-align: justify;
             line-height: 1.4;
@@ -241,6 +256,20 @@
                     <div class="info-icon">📍</div>
                     <div><strong>Lokasi:</strong> Di kelas anak masing-masing</div>
                 </div>
+            </div>
+
+            <!-- Maklumat Dokumen Diperlukan (Baru) -->
+            <div class="card doc-card">
+                <h3 style="margin-top:0; margin-bottom:15px; font-size:1.1rem; border-bottom:1px solid #ffeeba; padding-bottom:10px;">
+                    📂 Dokumen Penting Perlu Dibawa
+                </h3>
+                <ul class="doc-list">
+                    <li>Sijil Lahir Anak (Asal & Salinan)</li>
+                    <li>Salinan MyKid Anak</li>
+                    <li>Salinan Kad Pengenalan Ibu</li>
+                    <li>Salinan Kad Pengenalan Bapa</li>
+                    <li>Salinan Slip Gaji Ibu & Bapa (Terkini)</li>
+                </ul>
             </div>
 
             <div class="card">
@@ -319,7 +348,7 @@
             { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
             { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
             { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)" },
-            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Harga bergantung kepada pembelian (Kaunter Sekolah)" }
+            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Ada jualan dari kedai luar pada hari pendaftaran" }
         ];
 
         const defaultData = {

@@ -141,8 +141,12 @@
                 <select id="grade-select" onchange="loadData()">
                     <option value="" disabled selected>-- Sila Pilih Kelas --</option>
                     <option value="pra">Pra Sekolah</option>
-                    <option value="tahap1">Tahap 1 (Tahun 1, 2, 3)</option>
-                    <option value="tahap2">Tahap 2 (Tahun 4, 5, 6)</option>
+                    <option value="1_azam">1 Azam</option>
+                    <option value="2_amal">2 Amal</option>
+                    <option value="3_tekun">3 Tekun</option>
+                    <option value="4_cekal">4 Cekal</option>
+                    <option value="5_gigih">5 Gigih</option>
+                    <option value="6_yakin">6 Yakin</option>
                 </select>
             </div>
 
@@ -241,10 +245,11 @@
 
         function getFeeCategory(val) {
              if(val === 'pra') return 'pra';
-             if(val === 'tahap1') return 'tahap1';
-             if(val === 'tahap2') return 'tahap2';
              if(['1_azam','2_amal','3_tekun'].includes(val)) return 'tahap1';
              if(['4_cekal','5_gigih','6_yakin'].includes(val)) return 'tahap2';
+             // Fallback
+             if(val === 'tahap1') return 'tahap1';
+             if(val === 'tahap2') return 'tahap2';
              return 'tahap1';
         }
 
@@ -285,7 +290,12 @@
             const feeCategory = getFeeCategory(selectedClass);
             feeSection.classList.remove('hidden');
             footer.style.display = 'flex';
-            categoryDisplay.innerText = feeCategory === 'pra' ? 'Prasekolah' : (feeCategory === 'tahap1' ? 'Tahap 1' : 'Tahap 2');
+            
+            // Nama paparan kategori
+            let catName = 'Tahap 1';
+            if(feeCategory === 'pra') catName = 'Prasekolah';
+            else if(feeCategory === 'tahap2') catName = 'Tahap 2';
+            categoryDisplay.innerText = catName;
 
             const items = data[feeCategory] || [];
 

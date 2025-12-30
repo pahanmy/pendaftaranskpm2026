@@ -258,7 +258,7 @@
                 </div>
             </div>
 
-            <!-- Maklumat Dokumen Diperlukan (Baru) -->
+            <!-- Maklumat Dokumen Diperlukan -->
             <div class="card doc-card">
                 <h3 style="margin-top:0; margin-bottom:15px; font-size:1.1rem; border-bottom:1px solid #ffeeba; padding-bottom:10px;">
                     📂 Dokumen Penting Perlu Dibawa
@@ -339,9 +339,9 @@
         console.log("Firebase initialized successfully!");
 
         // ==========================================
-        // DATA YURAN 2026
+        // DATA YURAN 2026 (DATA ASAL / DEFAULT)
         // ==========================================
-        
+        // Data ini digunakan jika tiada data dalam Local Storage
         const commonFees = [
             { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja (Kaunter PIBG)" },
             { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid" },
@@ -358,6 +358,18 @@
         };
 
         function getSchoolData() {
+            // Cuba ambil data dari Local Storage (Data yang Admin simpan)
+            const storedData = localStorage.getItem('schoolFeesData');
+            
+            if (storedData) {
+                try {
+                    return JSON.parse(storedData);
+                } catch (e) {
+                    console.error("Ralat membaca data simpanan, guna data asal.");
+                    return defaultData;
+                }
+            }
+            // Jika tiada data simpanan, guna data asal
             return defaultData;
         }
 
@@ -365,7 +377,7 @@
             if (className === 'pra') return 'pra';
             if (['1_azam', '2_amal', '3_tekun'].includes(className)) return 'tahap1';
             if (['4_cekal', '5_gigih', '6_yakin'].includes(className)) return 'tahap2';
-            return 'tahap1';
+            return 'tahap1'; // Fallback
         }
 
         function getDisplayCategoryName(cat) {
@@ -400,32 +412,43 @@
             footer.style.display = 'flex';
             categoryDisplay.innerText = getDisplayCategoryName(feeCategory);
 
+            // Pastikan array wujud, jika tidak guna array kosong
             const items = data[feeCategory] || [];
 
-            items.forEach((item, index) => {
-                const li = document.createElement('li');
-                li.className = 'fee-item';
-                
-                const tag = item.required 
-                    ? `<span class="tag-wajib">WAJIB</span>` 
-                    : `<span class="tag-pilihan">PILIHAN</span>`;
-                
-                const defaultCheckState = item.required ? 'checked' : '';
-                const displayPrice = item.price === 0 ? "Ikut Belian" : `RM ${item.price.toFixed(2)}`;
-                const valuePrice = item.price;
+            if (items.length === 0) {
+                 listContainer.innerHTML = '<li style="text-align:center; padding:20px; color:#666;">Tiada senarai yuran ditetapkan untuk kategori ini.</li>';
+            } else {
+                items.forEach((item, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'fee-item';
+                    
+                    const tag = item.required 
+                        ? `<span class="tag-wajib">WAJIB</span>` 
+                        : `<span class="tag-pilihan">PILIHAN</span>`;
+                    
+                    // Logic checkbox: Default checked jika Wajib, atau ikut tetapan Admin
+                    // Kita benarkan user uncheck Wajib juga untuk simulasi bajet sendiri
+                    const defaultCheckState = item.required ? 'checked' : ''; 
+                    
+                    const displayPrice = item.price === 0 ? "Ikut Belian" : `RM ${item.price.toFixed(2)}`;
+                    const valuePrice = item.price;
+                    
+                    // Paparkan nota jika ada
+                    const noteHtml = item.note ? `<span class="item-note">${item.note}</span>` : '';
 
-                li.innerHTML = `
-                    <label class="checkbox-container">
-                        <input type="checkbox" value="${valuePrice}" ${defaultCheckState} onchange="calculateTotal()">
-                        <div class="item-content">
-                            <span class="item-name">${item.name} ${tag}</span>
-                            <span class="item-note">${item.note}</span>
-                        </div>
-                    </label>
-                    <div class="item-price">${displayPrice}</div>
-                `;
-                listContainer.appendChild(li);
-            });
+                    li.innerHTML = `
+                        <label class="checkbox-container">
+                            <input type="checkbox" value="${valuePrice}" ${defaultCheckState} onchange="calculateTotal()">
+                            <div class="item-content">
+                                <span class="item-name">${item.name} ${tag}</span>
+                                ${noteHtml}
+                            </div>
+                        </label>
+                        <div class="item-price">${displayPrice}</div>
+                    `;
+                    listContainer.appendChild(li);
+                });
+            }
 
             window.calculateTotal();
         }
@@ -467,7 +490,7 @@
                 staticTotal.style.display = 'none';
             }).catch(err => {
                 console.error("Gagal mengambil gambar:", err);
-                alert("Maaf, ada masalah teknikal semasa menyimpan gambar.");
+                alert("Maaf, ada masalah teknikal semasa menyimpan gambar. Sila cuba 'Screenshot' manual.");
                 
                 // Kembalikan UI jika error
                 exportBtn.style.display = 'block';

@@ -104,6 +104,8 @@
             border-radius: 10px;
             animation: fadeIn 0.5s;
         }
+        
+        /* Animasi */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -137,16 +139,12 @@
             </div>
 
             <div class="card">
-                <label><strong>Pilih Kelas Anak:</strong></label>
+                <label><strong>Pilih Kategori Darjah:</strong></label>
                 <select id="grade-select" onchange="loadData()">
-                    <option value="" disabled selected>-- Sila Pilih Kelas --</option>
+                    <option value="" disabled selected>-- Sila Pilih Tahap --</option>
                     <option value="pra">Pra Sekolah</option>
-                    <option value="1_azam">1 Azam</option>
-                    <option value="2_amal">2 Amal</option>
-                    <option value="3_tekun">3 Tekun</option>
-                    <option value="4_cekal">4 Cekal</option>
-                    <option value="5_gigih">5 Gigih</option>
-                    <option value="6_yakin">6 Yakin</option>
+                    <option value="tahap1">Tahap 1 (Tahun 1, 2, 3)</option>
+                    <option value="tahap2">Tahap 2 (Tahun 4, 5, 6)</option>
                 </select>
             </div>
 
@@ -163,13 +161,24 @@
                     Semua maklumat ini disediakan untuk anggaran keperluan sesi 2026. Tertakluk kepada perubahan. Bayaran rasmi dibuat di kaunter sekolah.
                 </div>
 
-                <!-- BORANG TEMPAHAN (Muncul hanya jika item tempahan dipilih) -->
+                <!-- BORANG TEMPAHAN (Muncul jika ada item tempahan) -->
                 <div id="reservation-section" class="order-name-box hidden">
                     <h4 style="margin-top:0; color:#0369a1; border-bottom:1px solid #bae6fd; padding-bottom:10px;">📋 Borang Tempahan Awal</h4>
                     
-                    <label style="display:block; color:#0369a1; font-weight:bold; margin-bottom:5px;">Nama Penuh Murid:</label>
-                    <input type="text" id="student-name" placeholder="TAIP NAMA PENUH DI SINI" oninput="this.value = this.value.toUpperCase()" style="font-weight:bold; color:#0d3b66; border: 2px solid #0284c7;">
-                    <small style="display:block; color:#0284c7; margin-top:5px; margin-bottom:15px;">* Wajib isi untuk rekod tempahan buku/alatan di sekolah.</small>
+                    <!-- 1. Nama Murid -->
+                    <label style="display:block; color:#0369a1; font-weight:bold; margin-bottom:5px;">1. Nama Penuh Murid:</label>
+                    <input type="text" id="student-name" placeholder="TAIP NAMA PENUH DI SINI" oninput="handleNameInput(this)" style="font-weight:bold; color:#0d3b66; border: 2px solid #0284c7;">
+                    
+                    <!-- 2. Pilihan Kelas (Muncul selepas taip nama) -->
+                    <div id="class-select-container" class="hidden" style="margin-top: 15px; animation: fadeIn 0.5s;">
+                        <label style="display:block; color:#0369a1; font-weight:bold; margin-bottom:5px;">2. Pilih Kelas Sebenar:</label>
+                        <select id="specific-class-select" style="border: 2px solid #0284c7; color:#0d3b66;">
+                            <option value="" disabled selected>-- Sila Pilih Kelas --</option>
+                            <!-- Options akan dijana oleh JS -->
+                        </select>
+                    </div>
+
+                    <small style="display:block; color:#0284c7; margin-top:15px; margin-bottom:15px;">* Sila isi nama dan kelas untuk memudahkan urusan di kaunter.</small>
 
                     <button onclick="submitOrder()" class="btn-submit" id="btn-submit-order">
                         <span>📤</span> Hantar Tempahan Ke Sekolah
@@ -196,46 +205,28 @@
 
         const firebaseConfig = { apiKey: "AIzaSyDrH9ySCZcWvn7GukRHk20-ig4SZpMvFk0", authDomain: "skpm2026-f308b.firebaseapp.com", projectId: "skpm2026-f308b", storageBucket: "skpm2026-f308b.firebasestorage.app", messagingSenderId: "806366483472", appId: "1:806366483472:web:94f5f73c071f50c58be695" };
         
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         
-        signInAnonymously(auth).catch((error) => {
-            console.error("Error signing in anonymously:", error);
-        });
+        signInAnonymously(auth).catch((error) => console.error("Error signing in:", error));
 
         const commonFees = [
-            { 
-                name: "Sumbangan PIBG", 
-                price: 30.00, 
-                required: true, 
-                note: "Satu keluarga sahaja. Dana ini penting untuk membiayai program kecemerlangan akademik, aktiviti sukan, serta penyelenggaraan fasiliti demi keselesaan murid.",
-                allowReservation: false 
-            },
-            { 
-                name: "Sumbangan Keceriaan Kelas", 
-                price: 10.00, 
-                required: true, 
-                note: "Setiap murid. Digunakan untuk pembelian alas meja, bahan hiasan papan kenyataan, dan mewujudkan suasana pembelajaran yang ceria dan kondusif.",
-                allowReservation: false
-            },
-            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)", allowReservation: false },
-            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)", allowReservation: false },
-            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)", allowReservation: false },
-            { 
-                name: "Buku & Alat Tulis", 
-                price: 0.00, 
-                required: false, 
-                note: "Ada jualan dari kedai luar pada hari pendaftaran",
-                allowReservation: true // Flag untuk butang tempahan
-            }
+            { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja...", allowReservation: false },
+            { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid...", allowReservation: false },
+            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, allowReservation: false },
+            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, allowReservation: false },
+            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan", allowReservation: false },
+            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Jualan kedai luar", allowReservation: true }
         ];
 
-        const defaultData = {
-            "pra": JSON.parse(JSON.stringify(commonFees)),
-            "tahap1": JSON.parse(JSON.stringify(commonFees)),
-            "tahap2": JSON.parse(JSON.stringify(commonFees))
+        const defaultData = { "pra": commonFees, "tahap1": commonFees, "tahap2": commonFees };
+
+        // SENARAI KELAS MENGIKUT TAHAP
+        const classLists = {
+            'pra': ['Pra Sekolah'],
+            'tahap1': ['1 Azam', '2 Amal', '3 Tekun'],
+            'tahap2': ['4 Cekal', '5 Gigih', '6 Yakin']
         };
 
         function getSchoolData() {
@@ -245,19 +236,28 @@
 
         function getFeeCategory(val) {
              if(val === 'pra') return 'pra';
-             if(['1_azam','2_amal','3_tekun'].includes(val)) return 'tahap1';
-             if(['4_cekal','5_gigih','6_yakin'].includes(val)) return 'tahap2';
-             // Fallback
+             if(['1_azam','2_amal','3_tekun'].includes(val)) return 'tahap1'; // Legacy check
+             if(['4_cekal','5_gigih','6_yakin'].includes(val)) return 'tahap2'; // Legacy check
              if(val === 'tahap1') return 'tahap1';
              if(val === 'tahap2') return 'tahap2';
              return 'tahap1';
         }
 
-        // Fungsi Global untuk akses dari HTML onclick
+        // Handle Input Nama -> Papar Kelas
+        window.handleNameInput = function(input) {
+            input.value = input.value.toUpperCase();
+            const classContainer = document.getElementById('class-select-container');
+            
+            if (input.value.trim().length > 0) {
+                classContainer.classList.remove('hidden');
+            } else {
+                classContainer.classList.add('hidden');
+            }
+        }
+
         window.toggleBookCheck = function(btn) {
             const li = btn.closest('.fee-item');
             const checkbox = li.querySelector('input[type="checkbox"]');
-            
             checkbox.checked = !checkbox.checked;
             
             if(checkbox.checked) {
@@ -267,12 +267,11 @@
                 btn.classList.remove('selected');
                 btn.innerHTML = "🛍️ Saya nak beli di kaunter sekolah nanti";
             }
-            
             window.calculateTotal();
         }
 
         window.loadData = function() {
-            const selectedClass = document.getElementById('grade-select').value;
+            const selectedGradeVal = document.getElementById('grade-select').value;
             const listContainer = document.getElementById('fee-list');
             const feeSection = document.getElementById('fee-section');
             const footer = document.getElementById('footer-total');
@@ -281,24 +280,37 @@
             const data = getSchoolData();
             listContainer.innerHTML = '';
             
-            if (!selectedClass) {
+            if (!selectedGradeVal) {
                 feeSection.classList.add('hidden');
                 footer.style.display = 'none';
                 return;
             }
 
-            const feeCategory = getFeeCategory(selectedClass);
+            const feeCategory = getFeeCategory(selectedGradeVal);
             feeSection.classList.remove('hidden');
             footer.style.display = 'flex';
             
-            // Nama paparan kategori
             let catName = 'Tahap 1';
             if(feeCategory === 'pra') catName = 'Prasekolah';
             else if(feeCategory === 'tahap2') catName = 'Tahap 2';
             categoryDisplay.innerText = catName;
 
-            const items = data[feeCategory] || [];
+            // Populate Class Dropdown based on selected Grade
+            const classSelect = document.getElementById('specific-class-select');
+            classSelect.innerHTML = '<option value="" disabled selected>-- Sila Pilih Kelas --</option>';
+            const classes = classLists[feeCategory] || [];
+            classes.forEach(cls => {
+                const opt = document.createElement('option');
+                opt.value = cls;
+                opt.text = cls;
+                classSelect.add(opt);
+            });
 
+            // Reset Nama & Kelas selection bila tukar tahap
+            document.getElementById('student-name').value = '';
+            document.getElementById('class-select-container').classList.add('hidden');
+
+            const items = data[feeCategory] || [];
             items.sort((a, b) => (a.required === b.required) ? 0 : a.required ? -1 : 1);
 
             items.forEach((item) => {
@@ -308,7 +320,6 @@
                 const tag = item.required ? `<span class="tag-wajib">WAJIB</span>` : `<span class="tag-pilihan">PILIHAN</span>`;
                 const defaultCheckState = item.required ? 'checked' : ''; 
                 const displayPrice = item.price === 0 ? "Ikut Belian" : `RM ${item.price.toFixed(2)}`;
-                
                 let extraHtml = item.note ? `<span class="item-note">${item.note}</span>` : '';
 
                 if (item.bookList && item.bookList.length > 0) {
@@ -319,7 +330,6 @@
                     extraHtml += `</ul>`;
                 }
 
-                // Periksa flag allowReservation dari data
                 const isReservable = item.allowReservation === true;
                 let buttonHtml = '';
                 
@@ -356,7 +366,6 @@
                 if (box.checked) {
                     total += parseFloat(box.value);
                 }
-                
                 const btn = box.closest('.fee-item').querySelector('.btn-counter-opt');
                 if(btn) {
                     if(box.checked) {
@@ -370,7 +379,6 @@
                 }
             });
 
-            // Toggle paparan Borang Tempahan
             const reservationSection = document.getElementById('reservation-section');
             if(reservationSection) {
                 if(isOrderActive) {
@@ -387,22 +395,19 @@
 
         window.submitOrder = async function() {
             const studentName = document.getElementById('student-name').value.trim();
-            const studentClassElem = document.getElementById('grade-select');
-            const studentClass = studentClassElem.options[studentClassElem.selectedIndex].text;
+            const specificClassElem = document.getElementById('specific-class-select');
+            const specificClass = specificClassElem.value;
             
-            // Kumpul Item yang DITEMPAH sahaja (yang ada button aktif)
             const orderItems = [];
             let totalAmount = 0;
 
             document.querySelectorAll('input[type="checkbox"]').forEach(box => {
                 if (box.checked) {
-                    // Check jika item ini adalah item tempahan (ada butang kaunter)
                     const btn = box.closest('.fee-item').querySelector('.btn-counter-opt');
                     if(btn && btn.classList.contains('selected')) {
                         const li = box.closest('.fee-item');
                         const itemName = li.querySelector('.item-name').innerText.replace('WAJIB', '').replace('PILIHAN', '').trim();
                         const price = parseFloat(box.value);
-                        
                         orderItems.push({ item: itemName, price: price });
                         totalAmount += price;
                     }
@@ -410,13 +415,19 @@
             });
 
             if (orderItems.length === 0) {
-                alert("Tiada item tempahan dipilih. Sila klik butang 'Beli di kaunter' pada item buku/alatan.");
+                alert("Tiada item tempahan dipilih.");
                 return;
             }
 
             if (!studentName) {
-                alert("Sila masukkan Nama Penuh Murid sebelum menghantar tempahan.");
+                alert("Sila masukkan Nama Penuh Murid.");
                 document.getElementById('student-name').focus();
+                return;
+            }
+
+            if (!specificClass) {
+                alert("Sila pilih Kelas Sebenar murid.");
+                document.getElementById('specific-class-select').focus();
                 return;
             }
 
@@ -427,19 +438,17 @@
 
             try {
                 const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'skpm-default';
-
                 await addDoc(collection(db, 'artifacts', appIdStr, 'public', 'data', 'tempahan_2026'), {
                     nama_murid: studentName,
-                    kelas: studentClass,
+                    kelas: specificClass, // Simpan kelas sebenar
                     senarai_item: orderItems,
                     jumlah_bayaran: totalAmount,
                     tarikh_tempahan: new Date().toISOString()
                 });
-
-                alert("✅ Tempahan berjaya dihantar ke sekolah! Sila simpan gambar sebagai rujukan anda.");
+                alert("✅ Tempahan berjaya dihantar ke sekolah! Sila simpan gambar sebagai rujukan.");
             } catch (e) {
                 console.error("Error adding document: ", e);
-                alert("Maaf, terdapat ralat semasa menghantar. Sila pastikan talian internet stabil.");
+                alert("Maaf, terdapat ralat semasa menghantar. Sila cuba lagi.");
             } finally {
                 submitBtn.innerHTML = originalText;
                 submitBtn.disabled = false;
@@ -449,11 +458,9 @@
         window.captureScreenshot = function() {
             const captureElement = document.getElementById('capture-area');
             const exportBtn = document.getElementById('btn-export-img');
-            const reservationSection = document.getElementById('reservation-section');
             const submitBtn = document.getElementById('btn-submit-order');
             const staticTotal = document.getElementById('static-total');
             
-            // Sembunyikan butang submit untuk screenshot, tapi kekalkan nama murid
             if(submitBtn) submitBtn.style.display = 'none';
             exportBtn.style.display = 'none';
             staticTotal.style.display = 'block';
@@ -465,7 +472,7 @@
                 link.click();
                 
                 exportBtn.style.display = 'block';
-                if(submitBtn) submitBtn.style.display = 'flex'; // Kembalikan display flex
+                if(submitBtn) submitBtn.style.display = 'flex';
                 staticTotal.style.display = 'none';
             }).catch(err => {
                 console.error(err);

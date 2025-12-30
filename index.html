@@ -6,7 +6,7 @@
     <title>Semakan Yuran SK Pulau Melayu Miri</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        :root { --primary-color: #0d3b66; --bg-color: #f0fdf4; --text-color: #1f2937; --card-bg: #ffffff; }
+        :root { --primary-color: #0d3b66; --bg-color: #f0fdf4; --text-color: #1f2937; --card-bg: #ffffff; --btn-action: #2563eb; --btn-success: #16a34a; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; }
         
         #capture-area { background-color: var(--bg-color); padding-bottom: 20px; }
@@ -28,12 +28,14 @@
         select, input[type="text"] { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; margin-top: 5px; background-color: #fff; box-sizing: border-box; }
         
         .fee-list { list-style: none; padding: 0; margin: 0; }
-        .fee-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 15px 0; border-bottom: 1px solid #f3f4f6; }
+        .fee-item { padding: 15px 0; border-bottom: 1px solid #f3f4f6; }
+        .fee-item-inner { display: flex; justify-content: space-between; align-items: flex-start; }
+        
         .checkbox-container { display: flex; align-items: flex-start; cursor: pointer; flex-grow: 1; padding-right: 10px; }
         
         input[type="checkbox"] { width: 20px; height: 20px; margin-right: 12px; margin-top: 2px; accent-color: var(--primary-color); flex-shrink: 0; }
         
-        .item-content { display: flex; flex-direction: column; }
+        .item-content { display: flex; flex-direction: column; width: 100%; }
         .item-name { font-weight: 600; color: #333; }
         .item-note { font-size: 0.85rem; color: #666; margin-top: 2px; font-style: italic; }
         .item-price { font-weight: bold; color: var(--primary-color); min-width: 90px; text-align: right; font-size: 1rem; }
@@ -47,7 +49,15 @@
         
         .disclaimer-box { margin-top: 25px; padding: 15px; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; color: #6c757d; font-size: 0.85rem; text-align: justify; line-height: 1.4; }
         
-        .btn-export { display: block; width: 100%; background-color: #0d3b66; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 20px; text-align: center; }
+        /* Butang Actions */
+        .action-buttons { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        
+        .btn-export { display: block; width: 100%; background-color: #0d3b66; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; }
+        .btn-export:hover { background-color: #0a2e52; }
+
+        .btn-submit { display: block; width: 100%; background-color: var(--btn-success); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-submit:hover { background-color: #15803d; }
+        .btn-submit:disabled { background-color: #86efac; cursor: not-allowed; }
         
         .hidden { display: none; }
         
@@ -65,6 +75,39 @@
         }
         .sub-book-list li { margin-bottom: 3px; display: flex; align-items: center; }
         .sub-book-list li::before { content: "📘"; margin-right: 6px; font-size: 0.8rem; }
+
+        /* Butang Khas 'Beli di Kaunter' */
+        .btn-counter-opt {
+            background-color: white;
+            border: 1px solid var(--btn-action);
+            color: var(--btn-action);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-counter-opt:hover { background-color: #eff6ff; }
+        .btn-counter-opt.selected { background-color: var(--btn-action); color: white; border-color: var(--btn-action); }
+
+        /* Style untuk Kotak Nama Tempahan */
+        .order-name-box {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f0f9ff; /* Biru muda cair */
+            border: 2px dashed #0284c7;
+            border-radius: 10px;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -93,12 +136,6 @@
                 </ul>
             </div>
 
-            <!-- Input Nama Murid -->
-            <div class="card">
-                <label><strong>Nama Penuh Murid:</strong></label>
-                <input type="text" id="student-name" placeholder="TAIP NAMA PENUH MURID DI SINI" oninput="this.value = this.value.toUpperCase()" style="font-weight:bold; color:#0d3b66;">
-            </div>
-
             <div class="card">
                 <label><strong>Pilih Kelas Anak:</strong></label>
                 <select id="grade-select" onchange="loadData()">
@@ -114,12 +151,32 @@
                     Senarai Bayaran (<span id="fee-category-display"></span>)
                 </div>
                 <ul class="fee-list" id="fee-list"></ul>
+
                 <div id="static-total" class="static-total-display">JUMLAH: <span id="static-total-value">RM 0.00</span></div>
+                
                 <div class="disclaimer-box">
                     <strong>⚠️ Pemakluman:</strong><br>
                     Semua maklumat ini disediakan untuk anggaran keperluan sesi 2026. Tertakluk kepada perubahan. Bayaran rasmi dibuat di kaunter sekolah.
                 </div>
-                <button onclick="captureScreenshot()" class="btn-export" id="btn-export-img">📸 Simpan Tempahan (Gambar)</button>
+
+                <!-- BORANG TEMPAHAN (Muncul hanya jika item tempahan dipilih) -->
+                <div id="reservation-section" class="order-name-box hidden">
+                    <h4 style="margin-top:0; color:#0369a1; border-bottom:1px solid #bae6fd; padding-bottom:10px;">📋 Borang Tempahan Awal</h4>
+                    
+                    <label style="display:block; color:#0369a1; font-weight:bold; margin-bottom:5px;">Nama Penuh Murid:</label>
+                    <input type="text" id="student-name" placeholder="TAIP NAMA PENUH DI SINI" oninput="this.value = this.value.toUpperCase()" style="font-weight:bold; color:#0d3b66; border: 2px solid #0284c7;">
+                    <small style="display:block; color:#0284c7; margin-top:5px; margin-bottom:15px;">* Wajib isi untuk rekod tempahan buku/alatan di sekolah.</small>
+
+                    <button onclick="submitOrder()" class="btn-submit" id="btn-submit-order">
+                        <span>📤</span> Hantar Tempahan Ke Sekolah
+                    </button>
+                </div>
+
+                <div class="action-buttons">
+                    <button onclick="captureScreenshot()" class="btn-export" id="btn-export-img">
+                        📸 Simpan Senarai Semak (Gambar)
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -130,8 +187,19 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
         const firebaseConfig = { apiKey: "AIzaSyDrH9ySCZcWvn7GukRHk20-ig4SZpMvFk0", authDomain: "skpm2026-f308b.firebaseapp.com", projectId: "skpm2026-f308b", storageBucket: "skpm2026-f308b.firebasestorage.app", messagingSenderId: "806366483472", appId: "1:806366483472:web:94f5f73c071f50c58be695" };
+        
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        signInAnonymously(auth).catch((error) => {
+            console.error("Error signing in anonymously:", error);
+        });
 
         const commonFees = [
             { 
@@ -173,6 +241,24 @@
              return 'tahap1';
         }
 
+        // Fungsi Global untuk akses dari HTML onclick
+        window.toggleBookCheck = function(btn) {
+            const li = btn.closest('.fee-item');
+            const checkbox = li.querySelector('input[type="checkbox"]');
+            
+            checkbox.checked = !checkbox.checked;
+            
+            if(checkbox.checked) {
+                btn.classList.add('selected');
+                btn.innerHTML = "✅ Akan dibeli di kaunter sekolah";
+            } else {
+                btn.classList.remove('selected');
+                btn.innerHTML = "🛍️ Saya nak beli di kaunter sekolah nanti";
+            }
+            
+            window.calculateTotal();
+        }
+
         window.loadData = function() {
             const selectedClass = document.getElementById('grade-select').value;
             const listContainer = document.getElementById('fee-list');
@@ -208,7 +294,6 @@
                 
                 let extraHtml = item.note ? `<span class="item-note">${item.note}</span>` : '';
 
-                // PAPARKAN SENARAI BUKU JIKA ADA
                 if (item.bookList && item.bookList.length > 0) {
                     extraHtml += `<ul class="sub-book-list">`;
                     item.bookList.forEach(b => {
@@ -217,15 +302,27 @@
                     extraHtml += `</ul>`;
                 }
 
+                const isBookItem = item.name.toLowerCase().includes('buku') || (item.bookList && item.bookList.length > 0);
+                let buttonHtml = '';
+                
+                if (isBookItem) {
+                    const btnClass = item.required ? 'btn-counter-opt selected' : 'btn-counter-opt';
+                    const btnText = item.required ? '✅ Akan dibeli di kaunter sekolah' : '🛍️ Saya nak beli di kaunter sekolah nanti';
+                    buttonHtml = `<button class="${btnClass}" onclick="toggleBookCheck(this)">${btnText}</button>`;
+                }
+
                 li.innerHTML = `
-                    <label class="checkbox-container">
-                        <input type="checkbox" value="${item.price}" ${defaultCheckState} onchange="calculateTotal()">
-                        <div class="item-content">
-                            <span class="item-name">${item.name} ${tag}</span>
-                            ${extraHtml}
-                        </div>
-                    </label>
-                    <div class="item-price">${displayPrice}</div>
+                    <div class="fee-item-inner">
+                        <label class="checkbox-container">
+                            <input type="checkbox" value="${item.price}" ${defaultCheckState} onchange="calculateTotal()">
+                            <div class="item-content">
+                                <span class="item-name">${item.name} ${tag}</span>
+                                ${extraHtml}
+                                ${buttonHtml}
+                            </div>
+                        </label>
+                        <div class="item-price">${displayPrice}</div>
+                    </div>
                 `;
                 listContainer.appendChild(li);
             });
@@ -235,18 +332,111 @@
 
         window.calculateTotal = function() {
             let total = 0;
+            let isOrderActive = false; 
+
             document.querySelectorAll('input[type="checkbox"]').forEach(box => {
-                if (box.checked) total += parseFloat(box.value);
+                if (box.checked) {
+                    total += parseFloat(box.value);
+                }
+                
+                const btn = box.closest('.fee-item').querySelector('.btn-counter-opt');
+                if(btn) {
+                    if(box.checked) {
+                        btn.classList.add('selected');
+                        btn.innerText = "✅ Akan dibeli di kaunter sekolah";
+                        isOrderActive = true;
+                    } else {
+                        btn.classList.remove('selected');
+                        btn.innerText = "🛍️ Saya nak beli di kaunter sekolah nanti";
+                    }
+                }
             });
+
+            // Toggle paparan Borang Tempahan
+            const reservationSection = document.getElementById('reservation-section');
+            if(reservationSection) {
+                if(isOrderActive) {
+                    reservationSection.classList.remove('hidden');
+                } else {
+                    reservationSection.classList.add('hidden');
+                }
+            }
+
             const fmt = "RM " + total.toFixed(2);
             document.getElementById('grand-total').innerText = fmt;
             document.getElementById('static-total-value').innerText = fmt;
         }
 
+        window.submitOrder = async function() {
+            const studentName = document.getElementById('student-name').value.trim();
+            const studentClassElem = document.getElementById('grade-select');
+            const studentClass = studentClassElem.options[studentClassElem.selectedIndex].text;
+            
+            // Kumpul Item yang DITEMPAH sahaja (yang ada button aktif)
+            const orderItems = [];
+            let totalAmount = 0;
+
+            document.querySelectorAll('input[type="checkbox"]').forEach(box => {
+                if (box.checked) {
+                    // Check jika item ini adalah item tempahan (ada butang kaunter)
+                    const btn = box.closest('.fee-item').querySelector('.btn-counter-opt');
+                    if(btn && btn.classList.contains('selected')) {
+                        const li = box.closest('.fee-item');
+                        const itemName = li.querySelector('.item-name').innerText.replace('WAJIB', '').replace('PILIHAN', '').trim();
+                        const price = parseFloat(box.value);
+                        
+                        orderItems.push({ item: itemName, price: price });
+                        totalAmount += price;
+                    }
+                }
+            });
+
+            if (orderItems.length === 0) {
+                alert("Tiada item tempahan dipilih. Sila klik butang 'Beli di kaunter' pada item buku/alatan.");
+                return;
+            }
+
+            if (!studentName) {
+                alert("Sila masukkan Nama Penuh Murid sebelum menghantar tempahan.");
+                document.getElementById('student-name').focus();
+                return;
+            }
+
+            const submitBtn = document.getElementById('btn-submit-order');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = "⏳ Sedang Hantar...";
+            submitBtn.disabled = true;
+
+            try {
+                const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'skpm-default';
+
+                await addDoc(collection(db, 'artifacts', appIdStr, 'public', 'data', 'tempahan_2026'), {
+                    nama_murid: studentName,
+                    kelas: studentClass,
+                    senarai_item: orderItems,
+                    jumlah_bayaran: totalAmount,
+                    tarikh_tempahan: new Date().toISOString()
+                });
+
+                alert("✅ Tempahan berjaya dihantar ke sekolah! Sila simpan gambar sebagai rujukan anda.");
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                alert("Maaf, terdapat ralat semasa menghantar. Sila pastikan talian internet stabil.");
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
         window.captureScreenshot = function() {
             const captureElement = document.getElementById('capture-area');
             const exportBtn = document.getElementById('btn-export-img');
+            const reservationSection = document.getElementById('reservation-section');
+            const submitBtn = document.getElementById('btn-submit-order');
             const staticTotal = document.getElementById('static-total');
+            
+            // Sembunyikan butang submit untuk screenshot, tapi kekalkan nama murid
+            if(submitBtn) submitBtn.style.display = 'none';
             exportBtn.style.display = 'none';
             staticTotal.style.display = 'block';
             
@@ -255,7 +445,15 @@
                 link.download = 'tempahan-yuran-skpm-2026.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
+                
                 exportBtn.style.display = 'block';
+                if(submitBtn) submitBtn.style.display = 'flex'; // Kembalikan display flex
+                staticTotal.style.display = 'none';
+            }).catch(err => {
+                console.error(err);
+                alert("Gagal mengambil gambar.");
+                exportBtn.style.display = 'block';
+                if(submitBtn) submitBtn.style.display = 'flex';
                 staticTotal.style.display = 'none';
             });
         }

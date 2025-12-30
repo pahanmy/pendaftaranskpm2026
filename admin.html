@@ -137,7 +137,7 @@
             { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
             { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
             { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)" },
-            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Harga ikut pembelian (Kaunter Sekolah)" }
+            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Ada jualan dari kedai luar pada hari pendaftaran" }
         ];
 
         // Struktur data default
@@ -260,7 +260,7 @@
 
         // 6. Reset Data
         function resetDefault() {
-            if (confirm("Amaran: Ini akan memadam semua perubahan anda dan kembali kepada data asal 2026 (PIBG RM30, dll). Teruskan?")) {
+            if (confirm("Amaran: Ini akan memadam semua perubahan anda dan kembali kepada data asal 2026 (termasuk kemaskini alat tulis). Teruskan?")) {
                 localStorage.removeItem('schoolFeesData');
                 location.reload();
             }

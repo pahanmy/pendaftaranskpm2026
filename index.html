@@ -206,26 +206,33 @@
                 name: "Sumbangan PIBG", 
                 price: 30.00, 
                 required: true, 
-                note: "Satu keluarga sahaja. Dana ini penting untuk membiayai program kecemerlangan akademik, aktiviti sukan, serta penyelenggaraan fasiliti demi keselesaan murid." 
+                note: "Satu keluarga sahaja. Dana ini penting untuk membiayai program kecemerlangan akademik, aktiviti sukan, serta penyelenggaraan fasiliti demi keselesaan murid.",
+                allowReservation: false 
             },
             { 
                 name: "Sumbangan Keceriaan Kelas", 
                 price: 10.00, 
                 required: true, 
-                note: "Setiap murid. Digunakan untuk pembelian alas meja, bahan hiasan papan kenyataan, dan mewujudkan suasana pembelajaran yang ceria dan kondusif." 
+                note: "Setiap murid. Digunakan untuk pembelian alas meja, bahan hiasan papan kenyataan, dan mewujudkan suasana pembelajaran yang ceria dan kondusif.",
+                allowReservation: false
             },
-            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false },
-            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false },
-            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan" },
+            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)", allowReservation: false },
+            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)", allowReservation: false },
+            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)", allowReservation: false },
             { 
                 name: "Buku & Alat Tulis", 
                 price: 0.00, 
                 required: false, 
-                note: "Ada jualan dari kedai di sekolah. Jika hendak order awal boleh membuat tempahan di sini terus." 
+                note: "Ada jualan dari kedai luar pada hari pendaftaran",
+                allowReservation: true // Flag untuk butang tempahan
             }
         ];
 
-        const defaultData = { "pra": commonFees, "tahap1": commonFees, "tahap2": commonFees };
+        const defaultData = {
+            "pra": JSON.parse(JSON.stringify(commonFees)),
+            "tahap1": JSON.parse(JSON.stringify(commonFees)),
+            "tahap2": JSON.parse(JSON.stringify(commonFees))
+        };
 
         function getSchoolData() {
             const stored = localStorage.getItem('schoolFeesData');
@@ -302,10 +309,11 @@
                     extraHtml += `</ul>`;
                 }
 
-                const isBookItem = item.name.toLowerCase().includes('buku') || (item.bookList && item.bookList.length > 0);
+                // Periksa flag allowReservation dari data
+                const isReservable = item.allowReservation === true;
                 let buttonHtml = '';
                 
-                if (isBookItem) {
+                if (isReservable) {
                     const btnClass = item.required ? 'btn-counter-opt selected' : 'btn-counter-opt';
                     const btnText = item.required ? '✅ Akan dibeli di kaunter sekolah' : '🛍️ Saya nak beli di kaunter sekolah nanti';
                     buttonHtml = `<button class="${btnClass}" onclick="toggleBookCheck(this)">${btnText}</button>`;

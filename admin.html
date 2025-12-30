@@ -98,6 +98,7 @@
         
         .btn-delete { background: #d32f2f; color: white; padding: 6px 12px; font-size: 0.85rem; margin-left: 5px;}
         .btn-edit { background: #F57C00; color: white; padding: 6px 12px; font-size: 0.85rem; }
+        .btn-reset { background: #546e7a; color: white; margin-top: 15px; width: 100%; }
         
         .btn-add-sub { background: #0288d1; color: white; padding: 8px 15px; width: 100%; margin-top: 10px; }
 
@@ -110,6 +111,8 @@
         
         .book-list-display { font-size: 0.85rem; color: #555; margin-top: 5px; padding-left: 10px; border-left: 3px solid #2196F3; }
         .book-list-display li { margin-bottom: 2px; }
+
+        .reservation-badge { background-color: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; border: 1px solid #bae6fd; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -145,8 +148,16 @@
                     </div>
                 </div>
 
-                <!-- Toggle Senarai Buku -->
-                <div style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px;">
+                <!-- Toggle Tetapan Lanjutan -->
+                <div style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px; display:flex; flex-direction:column; gap:8px;">
+                    
+                    <!-- Checkbox Tempahan -->
+                    <label style="display:inline-flex; align-items:center; cursor:pointer; color:#0284c7; font-weight:bold;">
+                        <input type="checkbox" id="new-allow-reservation" style="width:auto; margin-right:8px;">
+                        🛍️ Item ini boleh ditempah? (Ada butang 'Beli di Kaunter')
+                    </label>
+
+                    <!-- Checkbox Senarai Buku -->
                     <label style="display:inline-flex; align-items:center; cursor:pointer; color:#1565C0;">
                         <input type="checkbox" id="is-book-set" onchange="toggleBookSection()" style="width:auto; margin-right:8px;">
                         Item ini ada senarai buku di dalamnya?
@@ -221,28 +232,31 @@
     </div>
 
     <script>
-        // Data Default (Kini dikemaskini dengan huraian terperinci)
+        // Data Default (Dikemaskini dengan flag allowReservation)
         const commonFees = [
             { 
                 name: "Sumbangan PIBG", 
                 price: 30.00, 
                 required: true, 
-                note: "Satu keluarga sahaja. Dana ini penting untuk membiayai program kecemerlangan akademik, aktiviti sukan, serta penyelenggaraan fasiliti demi keselesaan murid." 
+                note: "Satu keluarga sahaja. Dana ini penting untuk membiayai program kecemerlangan akademik, aktiviti sukan, serta penyelenggaraan fasiliti demi keselesaan murid.",
+                allowReservation: false 
             },
             { 
                 name: "Sumbangan Keceriaan Kelas", 
                 price: 10.00, 
                 required: true, 
-                note: "Setiap murid. Digunakan untuk pembelian alas meja, bahan hiasan papan kenyataan, dan mewujudkan suasana pembelajaran yang ceria dan kondusif." 
+                note: "Setiap murid. Digunakan untuk pembelian alas meja, bahan hiasan papan kenyataan, dan mewujudkan suasana pembelajaran yang ceria dan kondusif.",
+                allowReservation: false
             },
-            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
-            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
-            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)" },
+            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)", allowReservation: false },
+            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)", allowReservation: false },
+            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)", allowReservation: false },
             { 
                 name: "Buku & Alat Tulis", 
                 price: 0.00, 
                 required: false, 
-                note: "Ada jualan dari kedai di sekolah. Jika hendak order awal boleh membuat tempahan di sini terus." 
+                note: "Ada jualan dari kedai luar pada hari pendaftaran",
+                allowReservation: true // Flag untuk butang tempahan
             }
         ];
 
@@ -348,6 +362,11 @@
                     
                     let detailsHtml = `<strong>${item.name}</strong>`;
                     
+                    // Badge Tempahan
+                    if (item.allowReservation) {
+                        detailsHtml += `<span class="reservation-badge">🛍️ Boleh Tempah</span>`;
+                    }
+
                     // Render List Buku dalam Jadual Utama
                     if (item.bookList && item.bookList.length > 0) {
                         detailsHtml += `<ul class="book-list-display">`;
@@ -381,14 +400,17 @@
             const price = parseFloat(document.getElementById('new-price').value);
             const required = document.getElementById('new-required').value === 'true';
             const note = document.getElementById('new-note').value.trim();
+            
+            // Flags
             const isBookSet = document.getElementById('is-book-set').checked;
+            const allowReservation = document.getElementById('new-allow-reservation').checked;
 
             if (!name || isNaN(price)) return alert("Sila isi nama dan harga.");
 
             if (!currentData[grade]) currentData[grade] = [];
 
             const newItem = { 
-                name, price, required, note, 
+                name, price, required, note, allowReservation,
                 bookList: isBookSet ? [...tempBookList] : [] 
             };
 
@@ -403,6 +425,7 @@
                 document.getElementById('new-price').value = '';
                 document.getElementById('new-note').value = '';
                 document.getElementById('is-book-set').checked = false;
+                document.getElementById('new-allow-reservation').checked = false;
                 tempBookList = [];
                 renderTempBooks();
                 toggleBookSection();
@@ -416,6 +439,7 @@
             document.getElementById('new-price').value = item.price;
             document.getElementById('new-required').value = item.required.toString();
             document.getElementById('new-note').value = item.note || '';
+            document.getElementById('new-allow-reservation').checked = item.allowReservation || false;
 
             // Load Buku
             if (item.bookList && item.bookList.length > 0) {
@@ -444,6 +468,7 @@
             document.getElementById('new-price').value = '';
             document.getElementById('new-note').value = '';
             document.getElementById('is-book-set').checked = false;
+            document.getElementById('new-allow-reservation').checked = false;
             tempBookList = [];
             renderTempBooks();
             toggleBookSection();

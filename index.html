@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semakan Yuran SK Pulau Melayu Miri</title>
+    <!-- Masukkan library html2canvas untuk fungsi screenshot -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #0d3b66; 
+            --bg-color: #f0fdf4;
+            --text-color: #1f2937;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Wrapper khas untuk kawasan yang akan di-screenshot */
+        #capture-area {
+            background-color: var(--bg-color); /* Pastikan background warna sama */
+            padding-bottom: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto 100px; /* Ruang lebih untuk footer */
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+        }
+
+        .school-logo {
+            height: 120px; 
+            width: auto;
+            margin-bottom: 15px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 { margin: 0; font-size: 1.6rem; font-weight: 700; }
+        header p { margin: 5px 0 0; opacity: 0.8; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        /* Style khas untuk kad maklumat */
+        .info-card {
+            background-color: #e3f2fd;
+            border: 1px solid #bbdefb;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        .info-row:last-child { margin-bottom: 0; }
+        .info-icon { font-size: 1.4rem; min-width: 30px; text-align: center; }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-top: 5px;
+            background-color: #fff;
+        }
+
+        .fee-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .fee-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align top untuk handle nota */
+            padding: 15px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .fee-item:last-child { border-bottom: none; }
+
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            cursor: pointer;
+            flex-grow: 1;
+            padding-right: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            margin-top: 2px;
+            accent-color: var(--primary-color);
+            flex-shrink: 0;
+        }
+
+        .item-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .item-note {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 2px;
+            font-style: italic;
+        }
+
+        .item-price {
+            font-weight: bold;
+            color: var(--primary-color);
+            min-width: 90px;
+            text-align: right;
+            font-size: 1rem;
+        }
+
+        .tag-wajib { background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; vertical-align: middle;}
+        .tag-pilihan { background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; vertical-align: middle;}
+
+        .total-footer {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            z-index: 100;
+        }
+
+        /* Total Statik (Hanya muncul dalam screenshot) */
+        .static-total-display {
+            display: none; /* Disembunyikan secara default */
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed #ccc;
+            text-align: right;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        .total-label { font-size: 0.9rem; color: #555; }
+        .total-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--primary-color);
+        }
+
+        /* Disclaimer Text */
+        .disclaimer-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            color: #856404;
+            font-size: 0.85rem;
+            text-align: justify;
+            line-height: 1.4;
+        }
+
+        /* Button Export */
+        .btn-export {
+            display: block;
+            width: 100%;
+            background-color: #0d3b66;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+        .btn-export:hover {
+            background-color: #0a2e52;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Kawasan Capture Bermula -->
+    <div id="capture-area">
+        <header>
+            <img src="https://i.ibb.co/JR8ksjgY/photo-2025-09-24-10-34-27.jpg" alt="Logo SK Pulau Melayu Miri" class="school-logo">
+            <h1>SK Pulau Melayu Miri</h1>
+            <p>Rumusan Bayaran Pendaftaran 2026</p>
+        </header>
+
+        <div class="container">
+            <!-- Maklumat Pendaftaran -->
+            <div class="card info-card">
+                <h3 style="margin-top:0; margin-bottom:15px; font-size:1.1rem; color:var(--primary-color); border-bottom:1px solid #bbdefb; padding-bottom:10px;">
+                    Maklumat Hari Pendaftaran
+                </h3>
+                <div class="info-row">
+                    <div class="info-icon">📅</div>
+                    <div><strong>Tarikh:</strong> 10 Januari 2026 (Sabtu)</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">⏰</div>
+                    <div><strong>Masa:</strong> 8.00 pagi - 10.00 pagi</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">📍</div>
+                    <div><strong>Lokasi:</strong> Di kelas anak masing-masing</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <label><strong>Pilih Kelas Anak:</strong></label>
+                <select id="grade-select" onchange="loadData()">
+                    <option value="" disabled selected>-- Sila Pilih Kelas --</option>
+                    <option value="pra">Pra Sekolah</option>
+                    <option value="1_azam">1 Azam</option>
+                    <option value="2_amal">2 Amal</option>
+                    <option value="3_tekun">3 Tekun</option>
+                    <option value="4_cekal">4 Cekal</option>
+                    <option value="5_gigih">5 Gigih</option>
+                    <option value="6_yakin">6 Yakin</option>
+                </select>
+            </div>
+
+            <div id="fee-section" class="card hidden">
+                <div style="margin-bottom:15px; font-weight:600; color:var(--primary-color); border-bottom: 2px solid #eee; padding-bottom: 10px;">
+                    Senarai Bayaran (<span id="fee-category-display"></span>)
+                </div>
+                <ul class="fee-list" id="fee-list"></ul>
+
+                <!-- Jumlah Statik untuk Screenshot -->
+                <div id="static-total" class="static-total-display">
+                    JUMLAH: <span id="static-total-value">RM 0.00</span>
+                </div>
+
+                <!-- Pemakluman / Disclaimer -->
+                <div class="disclaimer-box">
+                    <strong>⚠️ Pemakluman:</strong><br>
+                    Semua maklumat ini disediakan hanya untuk membantu ibu bapa mengira anggaran keperluan bagi sesi 2026. Semua bayaran dan maklumat adalah tertakluk kepada sebarang perubahan dari masa ke semasa oleh pihak sekolah. Sila buat bayaran di kaunter yang ditetapkan untuk resit rasmi.
+                </div>
+
+                <!-- Butang Export -->
+                <button onclick="captureScreenshot()" class="btn-export" id="btn-export-img">
+                    📸 Simpan Sebagai Gambar
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Kawasan Capture Tamat -->
+
+    <div class="total-footer" id="footer-total" style="display:none;">
+        <div>
+            <div class="total-label">Anggaran Jumlah Perlu Dibayar:</div>
+            <div class="total-value" id="grand-total">RM 0.00</div>
+        </div>
+    </div>
+
+    <!-- SCRIPT UTAMA (Module Type untuk Firebase) -->
+    <script type="module">
+        // Import Firebase dari CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+
+        // Konfigurasi Firebase Anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyDrH9ySCZcWvn7GukRHk20-ig4SZpMvFk0",
+            authDomain: "skpm2026-f308b.firebaseapp.com",
+            projectId: "skpm2026-f308b",
+            storageBucket: "skpm2026-f308b.firebasestorage.app",
+            messagingSenderId: "806366483472",
+            appId: "1:806366483472:web:94f5f73c071f50c58be695"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        console.log("Firebase initialized successfully!");
+
+        // ==========================================
+        // DATA YURAN 2026
+        // ==========================================
+        
+        const commonFees = [
+            { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja (Kaunter PIBG)" },
+            { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid" },
+            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
+            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
+            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)" },
+            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Harga bergantung kepada pembelian (Kaunter Sekolah)" }
+        ];
+
+        const defaultData = {
+            "pra": commonFees,
+            "tahap1": commonFees,
+            "tahap2": commonFees
+        };
+
+        function getSchoolData() {
+            return defaultData;
+        }
+
+        function getFeeCategory(className) {
+            if (className === 'pra') return 'pra';
+            if (['1_azam', '2_amal', '3_tekun'].includes(className)) return 'tahap1';
+            if (['4_cekal', '5_gigih', '6_yakin'].includes(className)) return 'tahap2';
+            return 'tahap1';
+        }
+
+        function getDisplayCategoryName(cat) {
+            if (cat === 'pra') return 'Prasekolah';
+            if (cat === 'tahap1') return 'Tahap 1';
+            if (cat === 'tahap2') return 'Tahap 2';
+            return '';
+        }
+
+        // FUNGSI UTAMA (Di-expose ke window supaya HTML onclick boleh baca)
+        
+        window.loadData = function() {
+            const selectedClass = document.getElementById('grade-select').value;
+            const listContainer = document.getElementById('fee-list');
+            const feeSection = document.getElementById('fee-section');
+            const footer = document.getElementById('footer-total');
+            const categoryDisplay = document.getElementById('fee-category-display');
+            
+            const data = getSchoolData();
+
+            listContainer.innerHTML = '';
+            
+            if (!selectedClass) {
+                feeSection.classList.add('hidden');
+                footer.style.display = 'none';
+                return;
+            }
+
+            const feeCategory = getFeeCategory(selectedClass);
+            
+            feeSection.classList.remove('hidden');
+            footer.style.display = 'flex';
+            categoryDisplay.innerText = getDisplayCategoryName(feeCategory);
+
+            const items = data[feeCategory] || [];
+
+            items.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'fee-item';
+                
+                const tag = item.required 
+                    ? `<span class="tag-wajib">WAJIB</span>` 
+                    : `<span class="tag-pilihan">PILIHAN</span>`;
+                
+                const defaultCheckState = item.required ? 'checked' : '';
+                const displayPrice = item.price === 0 ? "Ikut Belian" : `RM ${item.price.toFixed(2)}`;
+                const valuePrice = item.price;
+
+                li.innerHTML = `
+                    <label class="checkbox-container">
+                        <input type="checkbox" value="${valuePrice}" ${defaultCheckState} onchange="calculateTotal()">
+                        <div class="item-content">
+                            <span class="item-name">${item.name} ${tag}</span>
+                            <span class="item-note">${item.note}</span>
+                        </div>
+                    </label>
+                    <div class="item-price">${displayPrice}</div>
+                `;
+                listContainer.appendChild(li);
+            });
+
+            window.calculateTotal();
+        }
+
+        window.calculateTotal = function() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            let total = 0;
+            checkboxes.forEach(box => {
+                if (box.checked) total += parseFloat(box.value);
+            });
+            
+            const formattedTotal = "RM " + total.toFixed(2);
+            document.getElementById('grand-total').innerText = formattedTotal;
+            document.getElementById('static-total-value').innerText = formattedTotal;
+        }
+
+        window.captureScreenshot = function() {
+            const captureElement = document.getElementById('capture-area');
+            const exportBtn = document.getElementById('btn-export-img');
+            const staticTotal = document.getElementById('static-total');
+            
+            // 1. Persediaan UI sebelum capture
+            exportBtn.style.display = 'none'; // Sembunyikan butang
+            staticTotal.style.display = 'block'; // Tunjukkan total statik
+            
+            // 2. Ambil screenshot
+            html2canvas(captureElement, {
+                useCORS: true, // Untuk membenarkan gambar luar (logo)
+                scale: 2 // Kualiti lebih tinggi
+            }).then(canvas => {
+                // 3. Download gambar
+                const link = document.createElement('a');
+                link.download = 'senarai-yuran-skpm-2026.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // 4. Kembalikan UI asal
+                exportBtn.style.display = 'block';
+                staticTotal.style.display = 'none';
+            }).catch(err => {
+                console.error("Gagal mengambil gambar:", err);
+                alert("Maaf, ada masalah teknikal semasa menyimpan gambar.");
+                
+                // Kembalikan UI jika error
+                exportBtn.style.display = 'block';
+                staticTotal.style.display = 'none';
+            });
+        }
+    </script>
+</body>
+</html>

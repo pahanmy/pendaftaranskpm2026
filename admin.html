@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMIN - Tetapan Yuran Sekolah</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f0f0f0; color: #333; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        h1 { 
+            color: #d32f2f; 
+            border-bottom: 2px solid #eee; 
+            padding-bottom: 15px; 
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+        
+        .control-panel { 
+            background: #fff5f5; 
+            padding: 20px; 
+            border-radius: 8px; 
+            margin-bottom: 25px; 
+            border: 1px solid #ffcdd2; 
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group:last-child { margin-bottom: 0; }
+        
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: #555; }
+        
+        input, select { 
+            padding: 10px; 
+            width: 100%; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+        }
+        
+        button { 
+            cursor: pointer; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+
+        .btn-add { background: #2E7D32; color: white; width: 100%; }
+        .btn-save { background: #1565C0; color: white; font-size: 1.1rem; width: 100%; margin-top: 30px; padding: 15px; }
+        .btn-delete { background: #d32f2f; color: white; padding: 6px 12px; font-size: 0.85rem; }
+        .btn-reset { background: #546e7a; color: white; margin-top: 15px; width: 100%; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
+        th { background: #f9fafb; font-weight: 600; color: #444; }
+        tr:nth-child(even) { background-color: #fcfcfc; }
+        
+        .tag-wajib { color: #c62828; font-weight: bold; background: #ffebee; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
+        .tag-pilihan { color: #2e7d32; font-weight: bold; background: #e8f5e9; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>ADMIN: Pengurusan Senarai Yuran</h1>
+        <p style="margin-bottom: 20px; color: #666;">
+            Uruskan senarai yuran 2026 di sini. Klik "Simpan Perubahan" untuk menyimpan tetapan dalam pelayar ini (Local Storage).
+        </p>
+
+        <div class="control-panel">
+            <div class="form-group">
+                <label>1. Pilih Kategori untuk diedit:</label>
+                <select id="admin-grade" onchange="renderAdminList()">
+                    <option value="pra">Prasekolah</option>
+                    <option value="tahap1">Tahap 1 (Tahun 1, 2, 3)</option>
+                    <option value="tahap2">Tahap 2 (Tahun 4, 5, 6)</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="border-top:1px solid #ffcdd2; padding-top:20px;">
+                <label>2. Tambah Item Baru:</label>
+                <div style="display:flex; gap:10px; flex-wrap: wrap;">
+                    <div style="flex: 2; min-width: 200px;">
+                        <input type="text" id="new-name" placeholder="Nama Item (cth: Van Sekolah)">
+                    </div>
+                    <div style="flex: 1; min-width: 100px;">
+                        <input type="number" id="new-price" placeholder="Harga (RM)" step="0.01">
+                    </div>
+                    <div style="flex: 1; min-width: 100px;">
+                        <select id="new-required">
+                            <option value="true">Wajib</option>
+                            <option value="false">Pilihan</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <input type="text" id="new-note" placeholder="Nota Kecil (pilihan) - cth: Bayar di kedai buku">
+                </div>
+                <button class="btn-add" onclick="addItem()" style="margin-top:10px;">+ Tambah Ke Senarai</button>
+            </div>
+        </div>
+
+        <h3>Senarai Semasa: <span id="current-cat-display" style="color:#1565C0;">...</span></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 40%;">Item & Nota</th>
+                    <th style="width: 20%;">Jenis</th>
+                    <th style="width: 20%;">Harga</th>
+                    <th style="width: 20%;">Tindakan</th>
+                </tr>
+            </thead>
+            <tbody id="admin-list-body">
+                <!-- Item akan muncul di sini -->
+            </tbody>
+        </table>
+
+        <button class="btn-save" onclick="saveToStorage()">💾 SIMPAN PERUBAHAN</button>
+        <button class="btn-reset" onclick="resetDefault()">↺ Reset Ke Data Asal 2026</button>
+        
+        <p style="font-size:0.85rem; color:#777; margin-top:20px; text-align: center;">
+            * Nota: Perubahan disimpan dalam "Local Storage". Sila gunakan browser/peranti yang sama untuk melihat perubahan di halaman utama.
+        </p>
+    </div>
+
+    <script>
+        // ==========================================
+        // DATA YURAN 2026 (DATA SEBENAR TERKINI)
+        // ==========================================
+        const commonFees = [
+            { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja (Kaunter PIBG)" },
+            { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid" },
+            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
+            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)" },
+            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)" },
+            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Harga ikut pembelian (Kaunter Sekolah)" }
+        ];
+
+        // Struktur data default
+        const defaultData = {
+            "pra": JSON.parse(JSON.stringify(commonFees)),
+            "tahap1": JSON.parse(JSON.stringify(commonFees)),
+            "tahap2": JSON.parse(JSON.stringify(commonFees))
+        };
+
+        let currentData = {};
+
+        // 1. Mula: Load data
+        function init() {
+            const stored = localStorage.getItem('schoolFeesData');
+            if (stored) {
+                try {
+                    currentData = JSON.parse(stored);
+                } catch (e) {
+                    console.error("Data error, resetting to default");
+                    currentData = JSON.parse(JSON.stringify(defaultData));
+                }
+            } else {
+                currentData = JSON.parse(JSON.stringify(defaultData));
+            }
+            renderAdminList();
+        }
+
+        // 2. Paparkan Senarai
+        function renderAdminList() {
+            const grade = document.getElementById('admin-grade').value;
+            const tbody = document.getElementById('admin-list-body');
+            
+            // Update tajuk kategori (Cantikkan teks)
+            let displayTitle = "";
+            if(grade === 'pra') displayTitle = "Prasekolah";
+            else if(grade === 'tahap1') displayTitle = "Tahap 1 (Tahun 1-3)";
+            else displayTitle = "Tahap 2 (Tahun 4-6)";
+
+            document.getElementById('current-cat-display').innerText = displayTitle;
+            
+            tbody.innerHTML = '';
+
+            if (currentData[grade]) {
+                currentData[grade].forEach((item, index) => {
+                    const tr = document.createElement('tr');
+                    
+                    // Handle display RM0
+                    const priceDisplay = item.price === 0 ? "Ikut Belian" : `RM ${parseFloat(item.price).toFixed(2)}`;
+                    const tagClass = item.required ? 'tag-wajib' : 'tag-pilihan';
+                    const tagText = item.required ? 'WAJIB' : 'PILIHAN';
+                    const noteText = item.note ? `<br><small style="color:#666; font-style:italic;">${item.note}</small>` : '';
+
+                    tr.innerHTML = `
+                        <td>
+                            <strong>${item.name}</strong>
+                            ${noteText}
+                        </td>
+                        <td><span class="${tagClass}">${tagText}</span></td>
+                        <td style="font-weight:bold; color:#0d3b66;">${priceDisplay}</td>
+                        <td>
+                            <button class="btn-delete" onclick="deleteItem('${grade}', ${index})">Hapus</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                // Jika data rosak/kosong
+                currentData[grade] = []; 
+            }
+        }
+
+        // 3. Tambah Item
+        function addItem() {
+            const grade = document.getElementById('admin-grade').value;
+            const name = document.getElementById('new-name').value.trim();
+            const priceVal = document.getElementById('new-price').value;
+            const price = parseFloat(priceVal);
+            const required = document.getElementById('new-required').value === 'true';
+            const note = document.getElementById('new-note').value.trim();
+
+            if (!name) {
+                alert("Sila masukkan nama item.");
+                return;
+            }
+            if (isNaN(price)) {
+                alert("Sila masukkan harga yang sah.");
+                return;
+            }
+
+            if (!currentData[grade]) currentData[grade] = [];
+
+            currentData[grade].push({ 
+                name: name, 
+                price: price, 
+                required: required,
+                note: note 
+            });
+            
+            // Clear input
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+            document.getElementById('new-note').value = '';
+            
+            renderAdminList();
+        }
+
+        // 4. Hapus Item
+        function deleteItem(grade, index) {
+            if (confirm("Adakah anda pasti mahu membuang item ini?")) {
+                currentData[grade].splice(index, 1);
+                renderAdminList();
+            }
+        }
+
+        // 5. Simpan ke Local Storage
+        function saveToStorage() {
+            localStorage.setItem('schoolFeesData', JSON.stringify(currentData));
+            alert("✅ Berjaya disimpan!\n\nPerubahan kini aktif di halaman utama (index.html) pada pelayar ini.");
+        }
+
+        // 6. Reset Data
+        function resetDefault() {
+            if (confirm("Amaran: Ini akan memadam semua perubahan anda dan kembali kepada data asal 2026 (PIBG RM30, dll). Teruskan?")) {
+                localStorage.removeItem('schoolFeesData');
+                location.reload();
+            }
+        }
+
+        // Jalankan init bila page loading
+        window.onload = init;
+
+    </script>
+</body>
+</html>

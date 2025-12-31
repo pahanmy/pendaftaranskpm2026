@@ -12,6 +12,7 @@
         #capture-area { background-color: var(--bg-color); padding-bottom: 20px; }
         
         .container { max-width: 600px; margin: 0 auto 100px; }
+        
         header { text-align: center; margin-bottom: 30px; color: var(--primary-color); }
         .school-logo { height: 120px; width: auto; margin-bottom: 15px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         header h1 { margin: 0; font-size: 1.6rem; font-weight: 700; }
@@ -19,16 +20,19 @@
         .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .info-card { background-color: #e3f2fd; border: 1px solid #bbdefb; }
         .doc-card { background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+        
         .info-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 0.95rem; }
         .doc-list { padding-left: 25px; margin: 0; }
+        .doc-list li { margin-bottom: 5px; }
         
         select, input[type="text"] { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; margin-top: 5px; background-color: #fff; box-sizing: border-box; }
         
         .fee-list { list-style: none; padding: 0; margin: 0; }
         .fee-item { padding: 15px 0; border-bottom: 1px solid #f3f4f6; }
-        
         .fee-item-inner { display: flex; justify-content: space-between; align-items: flex-start; }
+        
         .checkbox-container { display: flex; align-items: flex-start; cursor: pointer; flex-grow: 1; padding-right: 10px; }
+        
         input[type="checkbox"] { width: 20px; height: 20px; margin-right: 12px; margin-top: 2px; accent-color: var(--primary-color); flex-shrink: 0; }
         
         .item-content { display: flex; flex-direction: column; width: 100%; }
@@ -42,29 +46,46 @@
         .total-footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; z-index: 100; }
         .static-total-display { display: none; margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ccc; text-align: right; font-size: 1.2rem; color: var(--primary-color); font-weight: bold; }
         .total-value { font-size: 1.6rem; font-weight: 800; color: var(--primary-color); }
+        
         .disclaimer-box { margin-top: 25px; padding: 15px; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; color: #6c757d; font-size: 0.85rem; text-align: justify; line-height: 1.4; }
         
         .action-buttons { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
         .btn-export { display: block; width: 100%; background-color: #0d3b66; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; }
+        .btn-export:hover { background-color: #0a2e52; }
         .btn-submit { display: block; width: 100%; background-color: var(--btn-success); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-submit:hover { background-color: #15803d; }
         .btn-submit:disabled { background-color: #86efac; cursor: not-allowed; }
         .hidden { display: none; }
-        
-        /* Sub-list buku */
         .sub-book-list { margin-top: 5px; padding-left: 0; list-style: none; background: #f9f9f9; padding: 8px; border-radius: 6px; font-size: 0.85rem; color: #444; border-left: 3px solid #2196F3; }
-        .sub-book-list li::before { content: "📘"; margin-right: 6px; }
+        .sub-book-list li { margin-bottom: 3px; display: flex; align-items: center; }
+        .sub-book-list li::before { content: "📘"; margin-right: 6px; font-size: 0.8rem; }
+        .btn-counter-opt { background-color: white; border: 1px solid var(--btn-action); color: var(--btn-action); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-counter-opt:hover { background-color: #eff6ff; }
+        .btn-counter-opt.selected { background-color: var(--btn-action); color: white; border-color: var(--btn-action); }
+        .order-name-box { margin-top: 25px; padding: 20px; background-color: #f0f9ff; border: 2px dashed #0284c7; border-radius: 10px; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Style untuk Countdown */
+        .countdown-box {
+            background: linear-gradient(to right, var(--primary-color), #1e40af);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .countdown-title { font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px; }
+        .countdown-timer { display: flex; justify-content: center; gap: 10px; }
+        .timer-item { background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 6px; min-width: 50px; }
+        .timer-val { font-size: 1.2rem; font-weight: bold; display: block; }
+        .timer-label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.8; }
         
-        /* Varian List (Radio) */
+        /* Style untuk Varian */
         .variant-list { margin-top: 5px; background: #fff8f0; padding: 8px; border-radius: 6px; border-left: 3px solid #ff9800; }
         .variant-label { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; cursor: pointer; }
         .variant-label:last-child { margin-bottom: 0; }
         .variant-label input { width: auto; margin-right: 8px; margin-top: 2px; }
-
-        /* Butang Khas 'Beli di Kaunter' */
-        .btn-counter-opt { background-color: white; border: 1px solid var(--btn-action); color: var(--btn-action); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-counter-opt.selected { background-color: var(--btn-action); color: white; border-color: var(--btn-action); }
-        .order-name-box { margin-top: 25px; padding: 20px; background-color: #f0f9ff; border: 2px dashed #0284c7; border-radius: 10px; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -76,6 +97,17 @@
         </header>
 
         <div class="container">
+            <!-- Countdown Timer -->
+            <div class="countdown-box">
+                <div class="countdown-title">Masa Berbaki ke Hari Pendaftaran (10 Jan 2026):</div>
+                <div class="countdown-timer" id="countdown-display">
+                    <div class="timer-item"><span class="timer-val" id="d-val">00</span><span class="timer-label">Hari</span></div>
+                    <div class="timer-item"><span class="timer-val" id="h-val">00</span><span class="timer-label">Jam</span></div>
+                    <div class="timer-item"><span class="timer-val" id="m-val">00</span><span class="timer-label">Minit</span></div>
+                    <div class="timer-item"><span class="timer-val" id="s-val">00</span><span class="timer-label">Saat</span></div>
+                </div>
+            </div>
+
             <div class="card info-card">
                 <h3 style="margin:0 0 15px 0; font-size:1.1rem; color:var(--primary-color); border-bottom:1px solid #bbdefb; padding-bottom:10px;">Maklumat Hari Pendaftaran</h3>
                 <div class="info-row"><div class="info-icon">📅</div><div><strong>Tarikh:</strong> 10 Januari 2026 (Sabtu)</div></div>
@@ -113,7 +145,8 @@
                 
                 <div class="disclaimer-box">
                     <strong>⚠️ Pemakluman:</strong><br>
-                    Semua maklumat ini disediakan untuk anggaran keperluan sesi 2026. Tertakluk kepada perubahan. Bayaran rasmi dibuat di kaunter sekolah.
+                    Semua maklumat ini disediakan untuk anggaran keperluan sesi 2026. Tertakluk kepada perubahan.<br><br>
+                    <strong>💳 Info Pembayaran:</strong> Segala pembayaran boleh dilakukan melalui <strong>QR Code (DuitNow)</strong> atau <strong>Tunai</strong> di meja Guru Kelas dan Kaunter PIBG pada hari pendaftaran.
                 </div>
 
                 <div id="reservation-section" class="order-name-box hidden">
@@ -153,6 +186,29 @@
         
         signInAnonymously(auth).catch((error) => console.error("Error signing in:", error));
 
+        // Set Date Countdown
+        const countDownDate = new Date("Jan 10, 2026 08:00:00").getTime();
+        const x = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countDownDate - now;
+            
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("countdown-display").innerHTML = "HARI PENDAFTARAN SEDANG BERLANGSUNG/TAMAT";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("d-val").innerText = days;
+            document.getElementById("h-val").innerText = hours;
+            document.getElementById("m-val").innerText = minutes;
+            document.getElementById("s-val").innerText = seconds;
+        }, 1000);
+
         const commonFees = [
             { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja.", allowReservation: false },
             { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid.", allowReservation: false },
@@ -181,10 +237,10 @@
 
         function getFeeCategory(val) {
              if(val === 'pra') return 'pra';
-             if(['1_azam','2_amal','3_tekun'].includes(val)) return 'tahap1'; 
-             if(['4_cekal','5_gigih','6_yakin'].includes(val)) return 'tahap2'; 
              if(val === 'tahap1') return 'tahap1';
              if(val === 'tahap2') return 'tahap2';
+             if(['1_azam','2_amal','3_tekun'].includes(val)) return 'tahap1';
+             if(['4_cekal','5_gigih','6_yakin'].includes(val)) return 'tahap2';
              return 'tahap1';
         }
 
@@ -264,7 +320,7 @@
                     displayPrice = "Ikut Pilihan"; 
                     variantHtml = `<div class="variant-list">`;
                     item.variants.forEach((v, idx) => {
-                        const checked = idx === 0 ? 'checked' : ''; // Default first checked
+                        const checked = idx === 0 ? 'checked' : ''; 
                         variantHtml += `
                             <label class="variant-label">
                                 <div><input type="radio" name="var_${index}" value="${v.price}" ${checked} onchange="window.calculateTotal()"> ${v.name}</div>
@@ -365,7 +421,6 @@
                         let itemName = li.querySelector('.item-name').innerText.replace('WAJIB', '').replace('PILIHAN', '').trim();
                         let price = 0;
                         
-                        // Check variant
                         const radios = li.querySelectorAll('input[type="radio"]');
                         if (radios.length > 0) {
                             radios.forEach(r => { 

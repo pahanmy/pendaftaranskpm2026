@@ -7,119 +7,46 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f0f0f0; color: #333; }
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        h1 { 
-            color: #d32f2f; 
-            border-bottom: 2px solid #eee; 
-            padding-bottom: 15px; 
-            margin-top: 0;
-            font-size: 1.8rem;
-        }
-        
-        .control-panel { 
-            background: #fff5f5; 
-            padding: 20px; 
-            border-radius: 8px; 
-            margin-bottom: 25px; 
-            border: 1px solid #ffcdd2; 
-        }
-
+        h1 { color: #d32f2f; border-bottom: 2px solid #eee; padding-bottom: 15px; margin-top: 0; font-size: 1.8rem; }
+        .control-panel { background: #fff5f5; padding: 20px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #ffcdd2; }
         .form-group { margin-bottom: 20px; }
-        
         label { display: block; font-weight: 600; margin-bottom: 8px; color: #555; }
+        input, select { padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 1rem; }
         
-        input, select { 
-            padding: 10px; 
-            width: 100%; 
-            border: 1px solid #ddd; 
-            border-radius: 6px; 
-            box-sizing: border-box; 
-            font-size: 1rem;
-        }
+        /* Style Section */
+        .extra-section { background-color: #e3f2fd; padding: 15px; border-radius: 6px; margin-top: 10px; border: 1px dashed #2196F3; display: none; }
+        .variant-section { background-color: #fff3e0; padding: 15px; border-radius: 6px; margin-top: 10px; border: 1px dashed #ff9800; display: none; }
 
-        /* Style untuk Senarai Buku */
-        .book-section {
-            background-color: #e3f2fd;
-            padding: 15px;
-            border-radius: 6px;
-            margin-top: 10px;
-            border: 1px dashed #2196F3;
-            display: none;
-        }
-
-        .btn-quick-tag {
-            background-color: #fff;
-            border: 1px solid #2196F3;
-            color: #1976D2;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            margin: 3px;
-            transition: all 0.2s;
-            display: inline-block;
-        }
+        .btn-quick-tag { background-color: #fff; border: 1px solid #2196F3; color: #1976D2; padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; margin: 3px; transition: all 0.2s; display: inline-block; }
         .btn-quick-tag:hover { background-color: #bbdefb; transform: translateY(-1px); }
-
-        .sub-item-list {
-            margin-top: 10px;
-            background: #fff;
-            border: 1px solid #bbdefb;
-            border-radius: 4px;
-            padding: 10px;
-            min-height: 50px;
-        }
         
-        .sub-item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f1f8e9;
-            padding: 5px 10px;
-            margin-bottom: 5px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        button { 
-            cursor: pointer; 
-            padding: 10px 20px; 
-            border: none; 
-            border-radius: 6px; 
-            font-weight: 600; 
-            font-size: 0.95rem; 
-        }
+        .sub-item-list { margin-top: 10px; background: #fff; border: 1px solid #ddd; border-radius: 4px; padding: 10px; min-height: 40px; }
+        .sub-item-row { display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; padding: 5px 10px; margin-bottom: 5px; border-radius: 4px; font-size: 0.9rem; border-bottom: 1px solid #eee; }
+        
+        button { cursor: pointer; padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; font-size: 0.95rem; }
         button:hover { opacity: 0.9; }
-
         .btn-add { background: #2E7D32; color: white; flex: 2; }
         .btn-update { background: #E65100; color: white; flex: 2; }
         .btn-cancel { background: #78909c; color: white; flex: 1; display: none; }
         .btn-save { background: #1565C0; color: white; font-size: 1.1rem; width: 100%; margin-top: 30px; padding: 15px; }
-        
         .btn-delete { background: #d32f2f; color: white; padding: 6px 12px; font-size: 0.85rem; margin-left: 5px;}
         .btn-edit { background: #F57C00; color: white; padding: 6px 12px; font-size: 0.85rem; }
-        .btn-reset { background: #546e7a; color: white; margin-top: 15px; width: 100%; }
-        
         .btn-add-sub { background: #0288d1; color: white; padding: 8px 15px; width: 100%; margin-top: 10px; }
-
+        .btn-add-var { background: #ff9800; color: white; padding: 8px 15px; width: 100%; margin-top: 10px; }
+        
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid #eee; padding: 12px; text-align: left; }
         th { background: #f9fafb; font-weight: 600; color: #444; }
-        
         .tag-wajib { color: #c62828; background: #ffebee; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
         .tag-pilihan { color: #2e7d32; background: #e8f5e9; padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
-        
-        .book-list-display { font-size: 0.85rem; color: #555; margin-top: 5px; padding-left: 10px; border-left: 3px solid #2196F3; }
-        .book-list-display li { margin-bottom: 2px; }
-
+        .detail-list { font-size: 0.85rem; color: #555; margin-top: 5px; padding-left: 10px; border-left: 3px solid #ccc; }
         .reservation-badge { background-color: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; border: 1px solid #bae6fd; margin-left: 5px; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>ADMIN: Pengurusan Senarai Yuran</h1>
-        <p style="color:#666; margin-bottom:20px;">Uruskan senarai yuran dan buku latihan di sini.</p>
+        <p style="color:#666; margin-bottom:20px;">Uruskan senarai yuran, buku latihan, dan varian harga di sini.</p>
 
         <div class="control-panel">
             <div class="form-group">
@@ -135,10 +62,11 @@
                 <label id="form-title">2. Item Utama:</label>
                 <div style="display:flex; gap:10px; flex-wrap: wrap;">
                     <div style="flex: 2; min-width: 200px;">
-                        <input type="text" id="new-name" placeholder="Nama Item (cth: Buku Kerja & Latihan)">
+                        <input type="text" id="new-name" placeholder="Nama Item (cth: Baju T-Sekolah)">
                     </div>
                     <div style="flex: 1; min-width: 100px;">
                         <input type="number" id="new-price" placeholder="Harga (RM)" step="0.01">
+                        <small style="font-size:0.7rem; color:#888;">*Biarkan 0 jika ada varian harga</small>
                     </div>
                     <div style="flex: 1; min-width: 100px;">
                         <select id="new-required">
@@ -148,60 +76,54 @@
                     </div>
                 </div>
 
-                <!-- Toggle Tetapan Lanjutan -->
                 <div style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px; display:flex; flex-direction:column; gap:8px;">
-                    
-                    <!-- Checkbox Tempahan -->
                     <label style="display:inline-flex; align-items:center; cursor:pointer; color:#0284c7; font-weight:bold;">
                         <input type="checkbox" id="new-allow-reservation" style="width:auto; margin-right:8px;">
                         🛍️ Item ini boleh ditempah? (Ada butang 'Beli di Kaunter')
                     </label>
-
-                    <!-- Checkbox Senarai Buku -->
-                    <label style="display:inline-flex; align-items:center; cursor:pointer; color:#1565C0;">
-                        <input type="checkbox" id="is-book-set" onchange="toggleBookSection()" style="width:auto; margin-right:8px;">
-                        Item ini ada senarai buku di dalamnya?
+                    <label style="display:inline-flex; align-items:center; cursor:pointer; color:#e65100; font-weight:bold; background-color:#fff3e0; padding:5px; border-radius:4px;">
+                        <input type="checkbox" id="is-variant-set" onchange="toggleSections()" style="width:auto; margin-right:8px;">
+                        🔀 Item ini ada pilihan harga? (cth: Lengan Pendek/Panjang)
+                    </label>
+                    <label style="display:inline-flex; align-items:center; cursor:pointer; color:#1565C0; font-weight:bold; background-color:#e3f2fd; padding:5px; border-radius:4px;">
+                        <input type="checkbox" id="is-book-set" onchange="toggleSections()" style="width:auto; margin-right:8px;">
+                        📚 Item ini ada senarai buku di dalamnya?
                     </label>
                 </div>
 
-                <!-- Bahagian Tambah Buku (Nested) -->
-                <div id="book-section" class="book-section">
-                    <label style="font-size:0.9rem;">3. Masukkan Jenis Buku ke dalam item ini:</label>
-                    
-                    <!-- Butang Pantas -->
-                    <div style="margin-bottom: 10px;">
+                <!-- Section VARIAN (Baju dll) -->
+                <div id="variant-section" class="variant-section">
+                    <label style="font-size:0.9rem; font-weight:bold; color:#e65100;">3. Masukkan Pilihan Varian:</label>
+                    <div style="display:flex; gap:5px; align-items:flex-end;">
+                        <div style="flex:3;">
+                            <small>Nama Pilihan</small>
+                            <input type="text" id="var-name" placeholder="cth: Lengan Pendek">
+                        </div>
+                        <div style="flex:1;">
+                            <small>Harga (RM)</small>
+                            <input type="number" id="var-price" placeholder="35.00">
+                        </div>
+                    </div>
+                    <button class="btn-add-var" onclick="addVariant()">+ Tambah Pilihan</button>
+                    <div id="temp-var-list" class="sub-item-list"><small style="color:#999;">Tiada pilihan ditambah.</small></div>
+                </div>
+
+                <!-- Section BUKU -->
+                <div id="book-section" class="extra-section">
+                    <label style="font-size:0.9rem; font-weight:bold; color:#1976D2;">3. Masukkan Jenis Buku:</label>
+                    <div style="margin-bottom: 10px; margin-top:5px;">
                         <button class="btn-quick-tag" onclick="fillSubBook('Buku Garis Satu')">Garis 1</button>
-                        <button class="btn-quick-tag" onclick="fillSubBook('Buku Garis 1 Panjang')">Garis 1 Panjang</button>
                         <button class="btn-quick-tag" onclick="fillSubBook('Buku Garis Tiga')">Garis 3</button>
                         <button class="btn-quick-tag" onclick="fillSubBook('Buku Petak Kecil')">Petak Kecil</button>
                         <button class="btn-quick-tag" onclick="fillSubBook('Buku Petak Sederhana')">Petak Sederhana</button>
-                        <button class="btn-quick-tag" onclick="fillSubBook('Buku Lukisan')">Lukisan</button>
-                        <button class="btn-quick-tag" onclick="fillSubBook('Buku Penulisan')">Penulisan</button>
-                        <button class="btn-quick-tag" onclick="fillSubBook('Buku Sains')">Sains</button>
-                        <button class="btn-quick-tag" onclick="fillSubBook('Buku Muzik')">Muzik</button>
-                        <button class="btn-quick-tag" onclick="fillSubBook('')" style="border-style:dashed; color:#555;">+ Lain-lain (Taip)</button>
                     </div>
-
                     <div style="display:flex; gap:5px; align-items:flex-end;">
-                        <div style="flex:3;">
-                            <small>Jenis Buku</small>
-                            <input type="text" id="sub-book-name" placeholder="Nama buku...">
-                        </div>
-                        <div style="flex:1;">
-                            <small>Bil</small>
-                            <input type="number" id="sub-book-qty" placeholder="1" value="1">
-                        </div>
-                        <div style="flex:1;">
-                            <small>Muka Surat</small>
-                            <input type="number" id="sub-book-pages" placeholder="80" value="80">
-                        </div>
+                        <div style="flex:3;"><small>Jenis Buku</small><input type="text" id="sub-book-name"></div>
+                        <div style="flex:1;"><small>Bil</small><input type="number" id="sub-book-qty" value="1"></div>
+                        <div style="flex:1;"><small>Muka Surat</small><input type="number" id="sub-book-pages" value="80"></div>
                     </div>
-                    <button class="btn-add-sub" onclick="addSubBook()">+ Tambah Ke Senarai Buku</button>
-
-                    <!-- Senarai Sementara -->
-                    <div id="temp-sub-list" class="sub-item-list">
-                        <small style="color:#999; font-style:italic;">Tiada buku ditambah lagi.</small>
-                    </div>
+                    <button class="btn-add-sub" onclick="addSubBook()">+ Tambah Buku</button>
+                    <div id="temp-sub-list" class="sub-item-list"><small style="color:#999;">Tiada buku ditambah.</small></div>
                 </div>
 
                 <div style="margin-top: 15px;">
@@ -232,32 +154,22 @@
     </div>
 
     <script>
-        // Data Default (Dikemaskini dengan flag allowReservation)
         const commonFees = [
+            { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja. Dana untuk program sekolah.", allowReservation: false },
+            { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid. Untuk alas meja, langsir, cat.", allowReservation: false },
             { 
-                name: "Sumbangan PIBG", 
-                price: 30.00, 
-                required: true, 
-                note: "Satu keluarga sahaja. Dana ini penting untuk membiayai program kecemerlangan akademik, aktiviti sukan, serta penyelenggaraan fasiliti demi keselesaan murid.",
-                allowReservation: false 
-            },
-            { 
-                name: "Sumbangan Keceriaan Kelas", 
-                price: 10.00, 
-                required: true, 
-                note: "Setiap murid. Digunakan untuk pembelian alas meja, bahan hiasan papan kenyataan, dan mewujudkan suasana pembelajaran yang ceria dan kondusif.",
-                allowReservation: false
-            },
-            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)", allowReservation: false },
-            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, note: "Pilihan / Jika perlu (Kaunter PIBG)", allowReservation: false },
-            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan (Anggaran Harga)", allowReservation: false },
-            { 
-                name: "Buku & Alat Tulis", 
-                price: 0.00, 
+                name: "Baju T-Sekolah", 
+                price: 0, 
                 required: false, 
-                note: "Ada jualan dari kedai luar pada hari pendaftaran",
-                allowReservation: true // Flag untuk butang tempahan
-            }
+                note: "Sila pilih jenis lengan", 
+                allowReservation: false,
+                variants: [
+                    { name: "Lengan Pendek", price: 35.00 },
+                    { name: "Lengan Panjang", price: 40.00 }
+                ]
+            },
+            { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan", allowReservation: false },
+            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Ada jualan kedai luar.", allowReservation: true }
         ];
 
         const defaultData = {
@@ -267,7 +179,8 @@
         };
 
         let currentData = {};
-        let tempBookList = []; // Array sementara untuk buku
+        let tempBookList = []; 
+        let tempVariantList = [];
         let editMode = false;
         let editIndex = null;
 
@@ -279,156 +192,116 @@
 
         function handleGradeChange() { cancelEdit(); renderAdminList(); }
 
-        function toggleBookSection() {
-            const isSet = document.getElementById('is-book-set').checked;
-            document.getElementById('book-section').style.display = isSet ? 'block' : 'none';
+        function toggleSections() {
+            document.getElementById('book-section').style.display = document.getElementById('is-book-set').checked ? 'block' : 'none';
+            document.getElementById('variant-section').style.display = document.getElementById('is-variant-set').checked ? 'block' : 'none';
         }
 
-        // --- SUB ITEM LOGIC (BUKU) ---
-        function fillSubBook(name) {
-            const nameInput = document.getElementById('sub-book-name');
-            nameInput.value = name;
-            document.getElementById('sub-book-qty').value = 1;
-            document.getElementById('sub-book-pages').value = 80;
-            
-            // Fokus jika nama kosong (untuk butang Lain-lain)
-            if(name === '') {
-                nameInput.focus();
-            }
+        // --- VARIANT LOGIC ---
+        function addVariant() {
+            const name = document.getElementById('var-name').value;
+            const price = parseFloat(document.getElementById('var-price').value);
+            if(!name || isNaN(price)) return alert("Isi nama dan harga varian.");
+            tempVariantList.push({ name, price });
+            renderTempVariants();
+            document.getElementById('var-name').value = '';
+            document.getElementById('var-price').value = '';
+        }
+        function removeVariant(idx) { tempVariantList.splice(idx, 1); renderTempVariants(); }
+        function renderTempVariants() {
+            const container = document.getElementById('temp-var-list');
+            if(tempVariantList.length === 0) { container.innerHTML = '<small style="color:#999;">Tiada pilihan.</small>'; return; }
+            container.innerHTML = '';
+            tempVariantList.forEach((v, idx) => {
+                container.innerHTML += `<div class="sub-item-row"><span>🔘 ${v.name} - RM${v.price.toFixed(2)}</span><button onclick="removeVariant(${idx})" style="color:red;background:none;border:none;">✕</button></div>`;
+            });
         }
 
+        // --- BOOK LOGIC ---
+        function fillSubBook(name) { document.getElementById('sub-book-name').value = name; }
         function addSubBook() {
             const name = document.getElementById('sub-book-name').value;
             const qty = document.getElementById('sub-book-qty').value;
             const pages = document.getElementById('sub-book-pages').value;
-
-            if(!name) return alert("Sila masukkan nama buku");
-
+            if(!name) return alert("Isi nama buku.");
             tempBookList.push({ name, qty, pages });
             renderTempBooks();
-            
-            // Reset input kecil
             document.getElementById('sub-book-name').value = '';
-            document.getElementById('sub-book-qty').value = 1;
-            document.getElementById('sub-book-pages').value = 80;
         }
-
-        function removeSubBook(idx) {
-            tempBookList.splice(idx, 1);
-            renderTempBooks();
-        }
-
+        function removeSubBook(idx) { tempBookList.splice(idx, 1); renderTempBooks(); }
         function renderTempBooks() {
             const container = document.getElementById('temp-sub-list');
-            if(tempBookList.length === 0) {
-                container.innerHTML = '<small style="color:#999; font-style:italic;">Tiada buku ditambah lagi.</small>';
-                return;
-            }
+            if(tempBookList.length === 0) { container.innerHTML = '<small style="color:#999;">Tiada buku.</small>'; return; }
             container.innerHTML = '';
-            tempBookList.forEach((book, idx) => {
-                const div = document.createElement('div');
-                div.className = 'sub-item-row';
-                div.innerHTML = `
-                    <span>📚 ${book.name} (${book.qty} x ${book.pages}ms)</span>
-                    <button onclick="removeSubBook(${idx})" style="background:none; border:none; color:red; cursor:pointer;">✕</button>
-                `;
-                container.appendChild(div);
+            tempBookList.forEach((b, idx) => {
+                container.innerHTML += `<div class="sub-item-row"><span>📚 ${b.name} (${b.qty}x)</span><button onclick="removeSubBook(${idx})" style="color:red;background:none;border:none;">✕</button></div>`;
             });
-        }
-
-        // --- MAIN FORM LOGIC ---
-        function sortItems(grade) {
-            if (currentData[grade]) {
-                currentData[grade].sort((a, b) => (a.required === b.required) ? 0 : a.required ? -1 : 1);
-            }
         }
 
         function renderAdminList() {
             const grade = document.getElementById('admin-grade').value;
             const tbody = document.getElementById('admin-list-body');
-            sortItems(grade);
-
-            let displayTitle = grade === 'pra' ? "Prasekolah" : grade === 'tahap1' ? "Tahap 1 (Tahun 1-3)" : "Tahap 2 (Tahun 4-6)";
-            document.getElementById('current-cat-display').innerText = displayTitle;
+            document.getElementById('current-cat-display').innerText = grade.toUpperCase();
             tbody.innerHTML = '';
 
             if (currentData[grade]) {
+                // Sort: Wajib first
+                currentData[grade].sort((a, b) => (a.required === b.required) ? 0 : a.required ? -1 : 1);
+
                 currentData[grade].forEach((item, index) => {
                     const tr = document.createElement('tr');
-                    
-                    const priceDisplay = item.price === 0 ? "Ikut Belian" : `RM ${parseFloat(item.price).toFixed(2)}`;
-                    const tagClass = item.required ? 'tag-wajib' : 'tag-pilihan';
+                    const priceDisplay = item.price === 0 && (!item.variants || item.variants.length===0) ? "Ikut Belian" : (item.variants && item.variants.length > 0 ? "Ikut Pilihan" : `RM ${parseFloat(item.price).toFixed(2)}`);
                     const tagText = item.required ? 'WAJIB' : 'PILIHAN';
+                    const tagClass = item.required ? 'tag-wajib' : 'tag-pilihan';
                     
                     let detailsHtml = `<strong>${item.name}</strong>`;
+                    if (item.allowReservation) detailsHtml += `<span class="reservation-badge">🛍️ Boleh Tempah</span>`;
                     
-                    // Badge Tempahan
-                    if (item.allowReservation) {
-                        detailsHtml += `<span class="reservation-badge">🛍️ Boleh Tempah</span>`;
-                    }
-
-                    // Render List Buku dalam Jadual Utama
-                    if (item.bookList && item.bookList.length > 0) {
-                        detailsHtml += `<ul class="book-list-display">`;
-                        item.bookList.forEach(b => {
-                            detailsHtml += `<li>• ${b.name} (${b.qty} unit, ${b.pages}ms)</li>`;
-                        });
+                    if (item.variants && item.variants.length > 0) {
+                        detailsHtml += `<ul class="detail-list" style="border-left-color:#ff9800;">`;
+                        item.variants.forEach(v => detailsHtml += `<li>🔘 ${v.name} (RM${v.price.toFixed(2)})</li>`);
                         detailsHtml += `</ul>`;
                     }
+                    if (item.bookList && item.bookList.length > 0) {
+                        detailsHtml += `<ul class="detail-list" style="border-left-color:#2196F3;">`;
+                        item.bookList.forEach(b => detailsHtml += `<li>📚 ${b.name}</li>`);
+                        detailsHtml += `</ul>`;
+                    }
+                    if (item.note) detailsHtml += `<br><small style="color:#666;">${item.note}</small>`;
 
-                    if (item.note) detailsHtml += `<br><small style="color:#666; font-style:italic;">${item.note}</small>`;
-
-                    tr.innerHTML = `
-                        <td>${detailsHtml}</td>
-                        <td><span class="${tagClass}">${tagText}</span></td>
-                        <td style="font-weight:bold; color:#0d3b66;">${priceDisplay}</td>
-                        <td>
-                            <button class="btn-edit" onclick="startEdit('${grade}', ${index})">Edit</button>
-                            <button class="btn-delete" onclick="deleteItem('${grade}', ${index})">Hapus</button>
-                        </td>
-                    `;
+                    tr.innerHTML = `<td>${detailsHtml}</td><td><span class="${tagClass}">${tagText}</span></td><td style="font-weight:bold;color:#0d3b66;">${priceDisplay}</td>
+                        <td><button class="btn-edit" onclick="startEdit('${grade}', ${index})">Edit</button> <button class="btn-delete" onclick="deleteItem('${grade}', ${index})">Hapus</button></td>`;
                     tbody.appendChild(tr);
                 });
-            } else {
-                currentData[grade] = []; 
-            }
+            } else { currentData[grade] = []; }
         }
 
         function processForm() {
             const grade = document.getElementById('admin-grade').value;
             const name = document.getElementById('new-name').value.trim();
-            const price = parseFloat(document.getElementById('new-price').value);
+            const price = parseFloat(document.getElementById('new-price').value || 0);
             const required = document.getElementById('new-required').value === 'true';
             const note = document.getElementById('new-note').value.trim();
-            
-            // Flags
-            const isBookSet = document.getElementById('is-book-set').checked;
             const allowReservation = document.getElementById('new-allow-reservation').checked;
+            const isBookSet = document.getElementById('is-book-set').checked;
+            const isVariantSet = document.getElementById('is-variant-set').checked;
 
-            if (!name || isNaN(price)) return alert("Sila isi nama dan harga.");
-
+            if (!name) return alert("Sila isi nama item.");
             if (!currentData[grade]) currentData[grade] = [];
 
-            const newItem = { 
+            const newItem = {
                 name, price, required, note, allowReservation,
-                bookList: isBookSet ? [...tempBookList] : [] 
+                bookList: isBookSet ? [...tempBookList] : [],
+                variants: isVariantSet ? [...tempVariantList] : []
             };
 
             if (editMode && editIndex !== null) {
                 currentData[grade][editIndex] = newItem;
-                alert("Item dikemaskini.");
-                cancelEdit(); 
+                alert("Dikemaskini.");
+                cancelEdit();
             } else {
                 currentData[grade].push(newItem);
-                // Reset Form
-                document.getElementById('new-name').value = '';
-                document.getElementById('new-price').value = '';
-                document.getElementById('new-note').value = '';
-                document.getElementById('is-book-set').checked = false;
-                document.getElementById('new-allow-reservation').checked = false;
-                tempBookList = [];
-                renderTempBooks();
-                toggleBookSection();
+                cancelEdit(); // Reset form
             }
             renderAdminList();
         }
@@ -441,16 +314,15 @@
             document.getElementById('new-note').value = item.note || '';
             document.getElementById('new-allow-reservation').checked = item.allowReservation || false;
 
-            // Load Buku
-            if (item.bookList && item.bookList.length > 0) {
-                document.getElementById('is-book-set').checked = true;
-                tempBookList = [...item.bookList];
-            } else {
-                document.getElementById('is-book-set').checked = false;
-                tempBookList = [];
-            }
-            toggleBookSection();
+            document.getElementById('is-book-set').checked = !!(item.bookList && item.bookList.length);
+            tempBookList = item.bookList ? [...item.bookList] : [];
+            
+            document.getElementById('is-variant-set').checked = !!(item.variants && item.variants.length);
+            tempVariantList = item.variants ? [...item.variants] : [];
+
+            toggleSections();
             renderTempBooks();
+            renderTempVariants();
 
             editMode = true;
             editIndex = index;
@@ -467,11 +339,14 @@
             document.getElementById('new-name').value = '';
             document.getElementById('new-price').value = '';
             document.getElementById('new-note').value = '';
-            document.getElementById('is-book-set').checked = false;
             document.getElementById('new-allow-reservation').checked = false;
+            document.getElementById('is-book-set').checked = false;
+            document.getElementById('is-variant-set').checked = false;
             tempBookList = [];
+            tempVariantList = [];
+            toggleSections();
             renderTempBooks();
-            toggleBookSection();
+            renderTempVariants();
 
             document.getElementById('btn-submit').innerText = "+ Tambah Item Ke Jadual";
             document.getElementById('btn-submit').className = "btn-add";
@@ -480,7 +355,7 @@
         }
 
         function deleteItem(grade, index) {
-            if (confirm("Hapus item ini?")) {
+            if (confirm("Hapus?")) {
                 currentData[grade].splice(index, 1);
                 if (editMode && editIndex === index) cancelEdit();
                 renderAdminList();
@@ -489,7 +364,7 @@
 
         function saveToStorage() {
             localStorage.setItem('schoolFeesData', JSON.stringify(currentData));
-            alert("✅ Disimpan! Sila buka halaman utama untuk lihat perubahan.");
+            alert("✅ Disimpan!");
         }
 
         window.onload = init;

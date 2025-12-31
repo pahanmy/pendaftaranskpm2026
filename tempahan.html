@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senarai Tempahan - SK Pulau Melayu Miri</title>
+    <style>
+        :root { --primary-color: #0d3b66; --bg-color: #f0fdf4; --text-color: #1f2937; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; }
+        
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        h1 { margin: 0; color: var(--primary-color); }
+        p { color: #666; margin-top: 5px; }
+
+        .class-section { margin-bottom: 40px; }
+        .class-title { 
+            background-color: var(--primary-color); 
+            color: white; 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            font-size: 1.2rem; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 0.95rem; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; }
+        th { background-color: #f8f9fa; color: #333; font-weight: 600; }
+        tr:nth-child(even) { background-color: #fcfcfc; }
+        
+        .item-list { margin: 0; padding-left: 20px; font-size: 0.9rem; color: #555; }
+        .total-col { font-weight: bold; color: #0d3b66; min-width: 100px; }
+        .date-col { font-size: 0.85rem; color: #888; min-width: 120px; }
+
+        .loading { text-align: center; padding: 50px; font-size: 1.2rem; color: #666; }
+        .empty-state { text-align: center; padding: 20px; background: #fff3e0; border-radius: 8px; color: #e65100; }
+
+        .btn-print {
+            background-color: #2E7D32; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; float: right;
+        }
+        .btn-print:hover { background-color: #1b5e20; }
+
+        @media print {
+            .btn-print { display: none; }
+            body { background-color: white; }
+            .container { box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <button onclick="window.print()" class="btn-print">🖨️ Cetak Senarai</button>
+        <header>
+            <h1>Senarai Tempahan Awal 2026</h1>
+            <p>SK Pulau Melayu Miri</p>
+        </header>
+
+        <div id="loading" class="loading">⏳ Sedang memuatkan data tempahan...</div>
+        <div id="content"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // Konfigurasi Firebase yang sama
+        const firebaseConfig = { apiKey: "AIzaSyDrH9ySCZcWvn7GukRHk20-ig4SZpMvFk0", authDomain: "skpm2026-f308b.firebaseapp.com", projectId: "skpm2026-f308b", storageBucket: "skpm2026-f308b.firebasestorage.app", messagingSenderId: "806366483472", appId: "1:806366483472:web:94f5f73c071f50c58be695" };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Susunan Kelas yang dikehendaki
+        const classOrder = [
+            'Pra Sekolah', 
+            '1 Azam', '2 Amal', '3 Tekun', 
+            '4 Cekal', '5 Gigih', '6 Yakin'
+        ];
+
+        async function loadReservations() {
+            try {
+                await signInAnonymously(auth);
+                const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'skpm-default';
+                
+                // Ambil semua data tempahan
+                const q = query(collection(db, 'artifacts', appIdStr, 'public', 'data', 'tempahan_2026'));
+                const querySnapshot = await getDocs(q);
+                
+                const orders = [];
+                querySnapshot.forEach((doc) => {
+                    orders.push(doc.data());
+                });
+
+                if (orders.length === 0) {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('content').innerHTML = '<div class="empty-state">Tiada tempahan direkodkan setakat ini.</div>';
+                    return;
+                }
+
+                // Group data mengikut kelas
+                const groupedOrders = {};
+                orders.forEach(order => {
+                    const cls = order.kelas || "Lain-lain";
+                    if (!groupedOrders[cls]) groupedOrders[cls] = [];
+                    groupedOrders[cls].push(order);
+                });
+
+                // Paparkan ikut susunan classOrder
+                const contentDiv = document.getElementById('content');
+                contentDiv.innerHTML = ''; // Clear
+
+                // Loop through predefined order
+                // Gabungkan kelas yang ada dalam order tapi tiada dalam list (jika ada) ke hujung
+                const allClasses = [...new Set([...classOrder, ...Object.keys(groupedOrders)])];
+                
+                // Sort custom: Pastikan item dalam classOrder naik dulu
+                allClasses.sort((a, b) => {
+                    const idxA = classOrder.indexOf(a);
+                    const idxB = classOrder.indexOf(b);
+                    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                    if (idxA !== -1) return -1;
+                    if (idxB !== -1) return 1;
+                    return a.localeCompare(b);
+                });
+
+                allClasses.forEach(className => {
+                    if (groupedOrders[className] && groupedOrders[className].length > 0) {
+                        const classOrders = groupedOrders[className];
+                        
+                        // Sort by student name inside class
+                        classOrders.sort((a, b) => a.nama_murid.localeCompare(b.nama_murid));
+
+                        let rows = '';
+                        classOrders.forEach((order, idx) => {
+                            // Format Items List
+                            let itemListHtml = '<ul class="item-list">';
+                            order.senarai_item.forEach(i => {
+                                itemListHtml += `<li>${i.item} (RM${i.price.toFixed(2)})</li>`;
+                            });
+                            itemListHtml += '</ul>';
+
+                            // Format Date
+                            const date = new Date(order.tarikh_tempahan).toLocaleDateString('ms-MY', { day: 'numeric', month: 'short', hour: '2-digit', minute:'2-digit' });
+
+                            rows += `
+                                <tr>
+                                    <td>${idx + 1}</td>
+                                    <td><strong>${order.nama_murid}</strong></td>
+                                    <td>${itemListHtml}</td>
+                                    <td class="total-col">RM ${order.jumlah_bayaran.toFixed(2)}</td>
+                                    <td class="date-col">${date}</td>
+                                </tr>
+                            `;
+                        });
+
+                        const sectionHtml = `
+                            <div class="class-section">
+                                <div class="class-title">
+                                    <span>🏫 ${className}</span>
+                                    <span style="font-size:0.9rem; background:rgba(255,255,255,0.2); padding:2px 8px; border-radius:4px;">${classOrders.length} Murid</span>
+                                </div>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th style="width:5%">No</th>
+                                            <th style="width:25%">Nama Murid</th>
+                                            <th style="width:40%">Item Ditempah</th>
+                                            <th style="width:15%">Jumlah</th>
+                                            <th style="width:15%">Tarikh</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${rows}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                        contentDiv.innerHTML += sectionHtml;
+                    }
+                });
+
+                document.getElementById('loading').style.display = 'none';
+
+            } catch (error) {
+                console.error("Error loading data:", error);
+                document.getElementById('loading').innerText = "Ralat memuatkan data. Sila cuba lagi.";
+            }
+        }
+
+        // Jalankan fungsi
+        loadReservations();
+    </script>
+</body>
+</html>

@@ -12,7 +12,6 @@
         #capture-area { background-color: var(--bg-color); padding-bottom: 20px; }
         
         .container { max-width: 600px; margin: 0 auto 100px; }
-        
         header { text-align: center; margin-bottom: 30px; color: var(--primary-color); }
         .school-logo { height: 120px; width: auto; margin-bottom: 15px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         header h1 { margin: 0; font-size: 1.6rem; font-weight: 700; }
@@ -20,19 +19,16 @@
         .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .info-card { background-color: #e3f2fd; border: 1px solid #bbdefb; }
         .doc-card { background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
-        
         .info-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; font-size: 0.95rem; }
         .doc-list { padding-left: 25px; margin: 0; }
-        .doc-list li { margin-bottom: 5px; }
         
         select, input[type="text"] { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; margin-top: 5px; background-color: #fff; box-sizing: border-box; }
         
         .fee-list { list-style: none; padding: 0; margin: 0; }
         .fee-item { padding: 15px 0; border-bottom: 1px solid #f3f4f6; }
+        
         .fee-item-inner { display: flex; justify-content: space-between; align-items: flex-start; }
-        
         .checkbox-container { display: flex; align-items: flex-start; cursor: pointer; flex-grow: 1; padding-right: 10px; }
-        
         input[type="checkbox"] { width: 20px; height: 20px; margin-right: 12px; margin-top: 2px; accent-color: var(--primary-color); flex-shrink: 0; }
         
         .item-content { display: flex; flex-direction: column; width: 100%; }
@@ -46,70 +42,29 @@
         .total-footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 -4px 15px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; z-index: 100; }
         .static-total-display { display: none; margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ccc; text-align: right; font-size: 1.2rem; color: var(--primary-color); font-weight: bold; }
         .total-value { font-size: 1.6rem; font-weight: 800; color: var(--primary-color); }
-        
         .disclaimer-box { margin-top: 25px; padding: 15px; background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; color: #6c757d; font-size: 0.85rem; text-align: justify; line-height: 1.4; }
         
-        /* Butang Actions */
         .action-buttons { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
-        
         .btn-export { display: block; width: 100%; background-color: #0d3b66; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; }
-        .btn-export:hover { background-color: #0a2e52; }
-
         .btn-submit { display: block; width: 100%; background-color: var(--btn-success); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; }
-        .btn-submit:hover { background-color: #15803d; }
         .btn-submit:disabled { background-color: #86efac; cursor: not-allowed; }
-        
         .hidden { display: none; }
         
-        /* Style untuk sub-list buku di page ibu bapa */
-        .sub-book-list {
-            margin-top: 5px;
-            padding-left: 0;
-            list-style: none;
-            background: #f9f9f9;
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: #444;
-            border-left: 3px solid #2196F3;
-        }
-        .sub-book-list li { margin-bottom: 3px; display: flex; align-items: center; }
-        .sub-book-list li::before { content: "📘"; margin-right: 6px; font-size: 0.8rem; }
+        /* Sub-list buku */
+        .sub-book-list { margin-top: 5px; padding-left: 0; list-style: none; background: #f9f9f9; padding: 8px; border-radius: 6px; font-size: 0.85rem; color: #444; border-left: 3px solid #2196F3; }
+        .sub-book-list li::before { content: "📘"; margin-right: 6px; }
+        
+        /* Varian List (Radio) */
+        .variant-list { margin-top: 5px; background: #fff8f0; padding: 8px; border-radius: 6px; border-left: 3px solid #ff9800; }
+        .variant-label { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; cursor: pointer; }
+        .variant-label:last-child { margin-bottom: 0; }
+        .variant-label input { width: auto; margin-right: 8px; margin-top: 2px; }
 
         /* Butang Khas 'Beli di Kaunter' */
-        .btn-counter-opt {
-            background-color: white;
-            border: 1px solid var(--btn-action);
-            color: var(--btn-action);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 8px;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-counter-opt:hover { background-color: #eff6ff; }
+        .btn-counter-opt { background-color: white; border: 1px solid var(--btn-action); color: var(--btn-action); padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 8px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
         .btn-counter-opt.selected { background-color: var(--btn-action); color: white; border-color: var(--btn-action); }
-
-        /* Style untuk Kotak Nama Tempahan */
-        .order-name-box {
-            margin-top: 25px;
-            padding: 20px;
-            background-color: #f0f9ff; /* Biru muda cair */
-            border: 2px dashed #0284c7;
-            border-radius: 10px;
-            animation: fadeIn 0.5s;
-        }
-        
-        /* Animasi */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .order-name-box { margin-top: 25px; padding: 20px; background-color: #f0f9ff; border: 2px dashed #0284c7; border-radius: 10px; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -161,34 +116,22 @@
                     Semua maklumat ini disediakan untuk anggaran keperluan sesi 2026. Tertakluk kepada perubahan. Bayaran rasmi dibuat di kaunter sekolah.
                 </div>
 
-                <!-- BORANG TEMPAHAN (Muncul jika ada item tempahan) -->
                 <div id="reservation-section" class="order-name-box hidden">
                     <h4 style="margin-top:0; color:#0369a1; border-bottom:1px solid #bae6fd; padding-bottom:10px;">📋 Borang Tempahan Awal</h4>
-                    
-                    <!-- 1. Nama Murid -->
                     <label style="display:block; color:#0369a1; font-weight:bold; margin-bottom:5px;">1. Nama Penuh Murid:</label>
                     <input type="text" id="student-name" placeholder="TAIP NAMA PENUH DI SINI" oninput="handleNameInput(this)" style="font-weight:bold; color:#0d3b66; border: 2px solid #0284c7;">
-                    
-                    <!-- 2. Pilihan Kelas (Muncul selepas taip nama) -->
                     <div id="class-select-container" class="hidden" style="margin-top: 15px; animation: fadeIn 0.5s;">
                         <label style="display:block; color:#0369a1; font-weight:bold; margin-bottom:5px;">2. Pilih Kelas Sebenar:</label>
                         <select id="specific-class-select" style="border: 2px solid #0284c7; color:#0d3b66;">
                             <option value="" disabled selected>-- Sila Pilih Kelas --</option>
-                            <!-- Options akan dijana oleh JS -->
                         </select>
                     </div>
-
                     <small style="display:block; color:#0284c7; margin-top:15px; margin-bottom:15px;">* Sila isi nama dan kelas untuk memudahkan urusan di kaunter.</small>
-
-                    <button onclick="submitOrder()" class="btn-submit" id="btn-submit-order">
-                        <span>📤</span> Hantar Tempahan Ke Sekolah
-                    </button>
+                    <button onclick="submitOrder()" class="btn-submit" id="btn-submit-order"><span>📤</span> Hantar Tempahan Ke Sekolah</button>
                 </div>
 
                 <div class="action-buttons">
-                    <button onclick="captureScreenshot()" class="btn-export" id="btn-export-img">
-                        📸 Simpan Senarai Semak (Gambar)
-                    </button>
+                    <button onclick="captureScreenshot()" class="btn-export" id="btn-export-img">📸 Simpan Senarai Semak (Gambar)</button>
                 </div>
             </div>
         </div>
@@ -204,7 +147,6 @@
         import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyDrH9ySCZcWvn7GukRHk20-ig4SZpMvFk0", authDomain: "skpm2026-f308b.firebaseapp.com", projectId: "skpm2026-f308b", storageBucket: "skpm2026-f308b.firebasestorage.app", messagingSenderId: "806366483472", appId: "1:806366483472:web:94f5f73c071f50c58be695" };
-        
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -212,22 +154,25 @@
         signInAnonymously(auth).catch((error) => console.error("Error signing in:", error));
 
         const commonFees = [
-            { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja...", allowReservation: false },
-            { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid...", allowReservation: false },
-            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00, required: false, allowReservation: false },
-            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00, required: false, allowReservation: false },
+            { name: "Sumbangan PIBG", price: 30.00, required: true, note: "Satu keluarga sahaja.", allowReservation: false },
+            { name: "Sumbangan Keceriaan Kelas", price: 10.00, required: true, note: "Setiap murid.", allowReservation: false },
+            { 
+                name: "Baju T-Sekolah", 
+                price: 0, 
+                required: false, 
+                note: "Pilih jenis lengan", 
+                allowReservation: false,
+                variants: [
+                    { name: "Lengan Pendek", price: 35.00 },
+                    { name: "Lengan Panjang", price: 40.00 }
+                ]
+            },
             { name: "Name Tag (1 set 3 keping)", price: 5.00, required: false, note: "Pilihan", allowReservation: false },
-            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Jualan kedai luar", allowReservation: true }
+            { name: "Buku & Alat Tulis", price: 0.00, required: false, note: "Ada jualan kedai luar.", allowReservation: true }
         ];
 
         const defaultData = { "pra": commonFees, "tahap1": commonFees, "tahap2": commonFees };
-
-        // SENARAI KELAS MENGIKUT TAHAP
-        const classLists = {
-            'pra': ['Pra Sekolah'],
-            'tahap1': ['1 Azam', '2 Amal', '3 Tekun'],
-            'tahap2': ['4 Cekal', '5 Gigih', '6 Yakin']
-        };
+        const classLists = { 'pra': ['Pra Sekolah'], 'tahap1': ['1 Azam', '2 Amal', '3 Tekun'], 'tahap2': ['4 Cekal', '5 Gigih', '6 Yakin'] };
 
         function getSchoolData() {
             const stored = localStorage.getItem('schoolFeesData');
@@ -236,23 +181,18 @@
 
         function getFeeCategory(val) {
              if(val === 'pra') return 'pra';
-             if(['1_azam','2_amal','3_tekun'].includes(val)) return 'tahap1'; // Legacy check
-             if(['4_cekal','5_gigih','6_yakin'].includes(val)) return 'tahap2'; // Legacy check
+             if(['1_azam','2_amal','3_tekun'].includes(val)) return 'tahap1'; 
+             if(['4_cekal','5_gigih','6_yakin'].includes(val)) return 'tahap2'; 
              if(val === 'tahap1') return 'tahap1';
              if(val === 'tahap2') return 'tahap2';
              return 'tahap1';
         }
 
-        // Handle Input Nama -> Papar Kelas
         window.handleNameInput = function(input) {
             input.value = input.value.toUpperCase();
             const classContainer = document.getElementById('class-select-container');
-            
-            if (input.value.trim().length > 0) {
-                classContainer.classList.remove('hidden');
-            } else {
-                classContainer.classList.add('hidden');
-            }
+            if (input.value.trim().length > 0) classContainer.classList.remove('hidden');
+            else classContainer.classList.add('hidden');
         }
 
         window.toggleBookCheck = function(btn) {
@@ -289,13 +229,9 @@
             const feeCategory = getFeeCategory(selectedGradeVal);
             feeSection.classList.remove('hidden');
             footer.style.display = 'flex';
-            
-            let catName = 'Tahap 1';
-            if(feeCategory === 'pra') catName = 'Prasekolah';
-            else if(feeCategory === 'tahap2') catName = 'Tahap 2';
-            categoryDisplay.innerText = catName;
+            categoryDisplay.innerText = feeCategory === 'pra' ? 'Prasekolah' : (feeCategory === 'tahap1' ? 'Tahap 1' : 'Tahap 2');
 
-            // Populate Class Dropdown based on selected Grade
+            // Populate Class List
             const classSelect = document.getElementById('specific-class-select');
             classSelect.innerHTML = '<option value="" disabled selected>-- Sila Pilih Kelas --</option>';
             const classes = classLists[feeCategory] || [];
@@ -306,34 +242,48 @@
                 classSelect.add(opt);
             });
 
-            // Reset Nama & Kelas selection bila tukar tahap
             document.getElementById('student-name').value = '';
             document.getElementById('class-select-container').classList.add('hidden');
 
             const items = data[feeCategory] || [];
             items.sort((a, b) => (a.required === b.required) ? 0 : a.required ? -1 : 1);
 
-            items.forEach((item) => {
+            items.forEach((item, index) => {
                 const li = document.createElement('li');
                 li.className = 'fee-item';
                 
                 const tag = item.required ? `<span class="tag-wajib">WAJIB</span>` : `<span class="tag-pilihan">PILIHAN</span>`;
                 const defaultCheckState = item.required ? 'checked' : ''; 
-                const displayPrice = item.price === 0 ? "Ikut Belian" : `RM ${item.price.toFixed(2)}`;
-                let extraHtml = item.note ? `<span class="item-note">${item.note}</span>` : '';
+                
+                let displayPrice = item.price === 0 ? "Ikut Belian" : `RM ${item.price.toFixed(2)}`;
+                let priceValue = item.price;
+                
+                // Logic Varian (Radio Buttons)
+                let variantHtml = '';
+                if (item.variants && item.variants.length > 0) {
+                    displayPrice = "Ikut Pilihan"; 
+                    variantHtml = `<div class="variant-list">`;
+                    item.variants.forEach((v, idx) => {
+                        const checked = idx === 0 ? 'checked' : ''; // Default first checked
+                        variantHtml += `
+                            <label class="variant-label">
+                                <div><input type="radio" name="var_${index}" value="${v.price}" ${checked} onchange="window.calculateTotal()"> ${v.name}</div>
+                                <b>RM ${v.price.toFixed(2)}</b>
+                            </label>
+                        `;
+                    });
+                    variantHtml += `</div>`;
+                }
 
+                let extraHtml = item.note ? `<span class="item-note">${item.note}</span>` : '';
                 if (item.bookList && item.bookList.length > 0) {
                     extraHtml += `<ul class="sub-book-list">`;
-                    item.bookList.forEach(b => {
-                        extraHtml += `<li>${b.name} (${b.qty} unit, ${b.pages}ms)</li>`;
-                    });
+                    item.bookList.forEach(b => extraHtml += `<li>${b.name} (${b.qty} unit, ${b.pages}ms)</li>`);
                     extraHtml += `</ul>`;
                 }
 
-                const isReservable = item.allowReservation === true;
                 let buttonHtml = '';
-                
-                if (isReservable) {
+                if (item.allowReservation) {
                     const btnClass = item.required ? 'btn-counter-opt selected' : 'btn-counter-opt';
                     const btnText = item.required ? '✅ Akan dibeli di kaunter sekolah' : '🛍️ Saya nak beli di kaunter sekolah nanti';
                     buttonHtml = `<button class="${btnClass}" onclick="toggleBookCheck(this)">${btnText}</button>`;
@@ -342,10 +292,11 @@
                 li.innerHTML = `
                     <div class="fee-item-inner">
                         <label class="checkbox-container">
-                            <input type="checkbox" value="${item.price}" ${defaultCheckState} onchange="calculateTotal()">
+                            <input type="checkbox" value="${priceValue}" ${defaultCheckState} onchange="window.calculateTotal()">
                             <div class="item-content">
                                 <span class="item-name">${item.name} ${tag}</span>
                                 ${extraHtml}
+                                ${variantHtml}
                                 ${buttonHtml}
                             </div>
                         </label>
@@ -362,11 +313,19 @@
             let total = 0;
             let isOrderActive = false; 
 
-            document.querySelectorAll('input[type="checkbox"]').forEach(box => {
+            document.querySelectorAll('#fee-list > li').forEach(li => {
+                const box = li.querySelector('input[type="checkbox"]');
                 if (box.checked) {
-                    total += parseFloat(box.value);
+                    // Check if has variants (radio)
+                    const radios = li.querySelectorAll('input[type="radio"]');
+                    if (radios.length > 0) {
+                        radios.forEach(r => { if(r.checked) total += parseFloat(r.value); });
+                    } else {
+                        total += parseFloat(box.value);
+                    }
                 }
-                const btn = box.closest('.fee-item').querySelector('.btn-counter-opt');
+                
+                const btn = li.querySelector('.btn-counter-opt');
                 if(btn) {
                     if(box.checked) {
                         btn.classList.add('selected');
@@ -381,11 +340,8 @@
 
             const reservationSection = document.getElementById('reservation-section');
             if(reservationSection) {
-                if(isOrderActive) {
-                    reservationSection.classList.remove('hidden');
-                } else {
-                    reservationSection.classList.add('hidden');
-                }
+                if(isOrderActive) reservationSection.classList.remove('hidden');
+                else reservationSection.classList.add('hidden');
             }
 
             const fmt = "RM " + total.toFixed(2);
@@ -401,38 +357,38 @@
             const orderItems = [];
             let totalAmount = 0;
 
-            document.querySelectorAll('input[type="checkbox"]').forEach(box => {
+            document.querySelectorAll('#fee-list > li').forEach(li => {
+                const box = li.querySelector('input[type="checkbox"]');
                 if (box.checked) {
-                    const btn = box.closest('.fee-item').querySelector('.btn-counter-opt');
+                    const btn = li.querySelector('.btn-counter-opt');
                     if(btn && btn.classList.contains('selected')) {
-                        const li = box.closest('.fee-item');
-                        const itemName = li.querySelector('.item-name').innerText.replace('WAJIB', '').replace('PILIHAN', '').trim();
-                        const price = parseFloat(box.value);
+                        let itemName = li.querySelector('.item-name').innerText.replace('WAJIB', '').replace('PILIHAN', '').trim();
+                        let price = 0;
+                        
+                        // Check variant
+                        const radios = li.querySelectorAll('input[type="radio"]');
+                        if (radios.length > 0) {
+                            radios.forEach(r => { 
+                                if(r.checked) {
+                                    price = parseFloat(r.value);
+                                    itemName += ` (${r.parentElement.innerText.trim()})`;
+                                }
+                            });
+                        } else {
+                            price = parseFloat(box.value);
+                        }
+
                         orderItems.push({ item: itemName, price: price });
                         totalAmount += price;
                     }
                 }
             });
 
-            if (orderItems.length === 0) {
-                alert("Tiada item tempahan dipilih.");
-                return;
-            }
-
-            if (!studentName) {
-                alert("Sila masukkan Nama Penuh Murid.");
-                document.getElementById('student-name').focus();
-                return;
-            }
-
-            if (!specificClass) {
-                alert("Sila pilih Kelas Sebenar murid.");
-                document.getElementById('specific-class-select').focus();
-                return;
-            }
+            if (orderItems.length === 0) return alert("Tiada item tempahan dipilih.");
+            if (!studentName) { alert("Sila masukkan Nama Penuh Murid."); document.getElementById('student-name').focus(); return; }
+            if (!specificClass) { alert("Sila pilih Kelas Sebenar murid."); document.getElementById('specific-class-select').focus(); return; }
 
             const submitBtn = document.getElementById('btn-submit-order');
-            const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = "⏳ Sedang Hantar...";
             submitBtn.disabled = true;
 
@@ -440,7 +396,7 @@
                 const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'skpm-default';
                 await addDoc(collection(db, 'artifacts', appIdStr, 'public', 'data', 'tempahan_2026'), {
                     nama_murid: studentName,
-                    kelas: specificClass, // Simpan kelas sebenar
+                    kelas: specificClass, 
                     senarai_item: orderItems,
                     jumlah_bayaran: totalAmount,
                     tarikh_tempahan: new Date().toISOString()
@@ -450,7 +406,7 @@
                 console.error("Error adding document: ", e);
                 alert("Maaf, terdapat ralat semasa menghantar. Sila cuba lagi.");
             } finally {
-                submitBtn.innerHTML = originalText;
+                submitBtn.innerHTML = "<span>📤</span> Hantar Tempahan Ke Sekolah";
                 submitBtn.disabled = false;
             }
         }
@@ -460,23 +416,14 @@
             const exportBtn = document.getElementById('btn-export-img');
             const submitBtn = document.getElementById('btn-submit-order');
             const staticTotal = document.getElementById('static-total');
-            
             if(submitBtn) submitBtn.style.display = 'none';
             exportBtn.style.display = 'none';
             staticTotal.style.display = 'block';
-            
             html2canvas(captureElement, { useCORS: true, scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = 'tempahan-yuran-skpm-2026.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
-                exportBtn.style.display = 'block';
-                if(submitBtn) submitBtn.style.display = 'flex';
-                staticTotal.style.display = 'none';
-            }).catch(err => {
-                console.error(err);
-                alert("Gagal mengambil gambar.");
                 exportBtn.style.display = 'block';
                 if(submitBtn) submitBtn.style.display = 'flex';
                 staticTotal.style.display = 'none';

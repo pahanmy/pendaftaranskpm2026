@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Guru Kelas - SK Pulau Melayu Miri</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root { --primary-color: #1e3a8a; --bg-color: #f1f5f9; --text-color: #0f172a; --card-bg: #ffffff; --success: #16a34a; --whatsapp: #25D366; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; }
+        
+        .container { max-width: 800px; margin: 0 auto; padding-bottom: 50px; }
+        
+        /* Header */
+        header { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); text-align: center; margin-bottom: 20px; border-bottom: 4px solid var(--primary-color); }
+        h1 { margin: 0; font-size: 1.5rem; color: var(--primary-color); }
+        p { margin: 5px 0 0; color: #64748b; font-size: 0.9rem; }
+
+        /* Card Styles */
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--primary-color); margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9rem; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
+        input:focus, select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1); }
+
+        /* Search Box */
+        .search-box { display: flex; gap: 10px; }
+        .btn-search { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; flex-shrink: 0; }
+        
+        /* Fee List */
+        .fee-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+        .fee-item:last-child { border-bottom: none; }
+        .fee-label { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-grow: 1; }
+        .fee-price { font-weight: 700; color: var(--primary-color); }
+        input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-color); margin: 0; }
+
+        /* Total & Actions */
+        .total-section { background: #f8fafc; padding: 15px; border-radius: 8px; text-align: right; margin-top: 20px; border: 1px dashed #cbd5e1; }
+        .total-label { font-size: 0.9rem; color: #64748b; }
+        .total-value { font-size: 1.8rem; font-weight: 800; color: var(--primary-color); }
+
+        .btn-save { width: 100%; background: var(--success); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer; margin-top: 20px; transition: background 0.2s; }
+        .btn-save:hover { background: #15803d; }
+
+        /* Receipt Modal (Hidden by default) */
+        .receipt-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; padding: 20px; box-sizing: border-box; }
+        .receipt-content { background: white; width: 100%; max-width: 450px; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .receipt-header { background: var(--primary-color); color: white; padding: 20px; text-align: center; }
+        .receipt-body { padding: 25px; }
+        .receipt-item { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
+        .receipt-total { display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px solid #eee; font-weight: bold; font-size: 1.2rem; }
+        
+        .receipt-actions { padding: 20px; background: #f8fafc; display: flex; gap: 10px; flex-direction: column; }
+        .btn-wa { background: var(--whatsapp); color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-close { background: #94a3b8; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+        .hidden { display: none; }
+        .loading-text { text-align: center; color: #64748b; font-style: italic; margin-top: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Sistem Kutipan Yuran</h1>
+            <p>SK Pulau Melayu Miri</p>
+        </header>
+
+        <!-- Bahagian Carian -->
+        <div class="card">
+            <div class="section-title">1. Cari Data Murid</div>
+            <div class="form-group">
+                <label>Nama Murid:</label>
+                <div class="search-box">
+                    <input type="text" id="search-name" placeholder="Masukkan nama murid..." list="student-list">
+                    <datalist id="student-list">
+                        <!-- Auto-populated from Firebase -->
+                    </datalist>
+                    <button class="btn-search" onclick="findStudent()">Cari / Muat Data</button>
+                </div>
+                <div id="loading-msg" class="loading-text">Sedang mencari rekod tempahan...</div>
+            </div>
+        </div>
+
+        <!-- Bahagian Borang Bayaran -->
+        <div id="payment-form" class="card hidden">
+            <div class="section-title">2. Butiran Bayaran</div>
+            
+            <div class="form-group">
+                <label>Kelas:</label>
+                <select id="class-select" onchange="renderFeeList()">
+                    <option value="" disabled selected>-- Sila Pilih --</option>
+                    <option value="pra">Pra Sekolah</option>
+                    <option value="tahap1">Tahap 1 (Tahun 1, 2, 3)</option>
+                    <option value="tahap2">Tahap 2 (Tahun 4, 5, 6)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Senarai Item (Tanda untuk bayar):</label>
+                <div id="fee-list-container">
+                    <!-- Senarai akan dijana di sini -->
+                </div>
+            </div>
+
+            <div class="total-section">
+                <div class="total-label">JUMLAH BAYARAN</div>
+                <div class="total-value" id="grand-total">RM 0.00</div>
+            </div>
+        </div>
+
+        <!-- Bahagian Maklumat Penjaga -->
+        <div id="parent-details" class="card hidden">
+            <div class="section-title">3. Pengesahan & Resit</div>
+            
+            <div class="form-group">
+                <label>Nama Ibu/Bapa/Penjaga:</label>
+                <input type="text" id="parent-name" placeholder="Nama penjaga">
+            </div>
+            
+            <div class="form-group">
+                <label>No. Telefon (WhatsApp):</label>
+                <input type="text" id="parent-phone" placeholder="Contoh: 60123456789">
+            </div>
+
+            <div class="form-group">
+                <label>Kaedah Pembayaran:</label>
+                <select id="payment-method">
+                    <option value="Tunai">Tunai</option>
+                    <option value="QR DuitNow">QR DuitNow</option>
+                    <option value="Pindahan Bank">Pindahan Bank</option>
+                </select>
+            </div>
+
+            <button class="btn-save" onclick="processPayment()">✅ SAHKAN BAYARAN & JANA RESIT</button>
+        </div>
+    </div>
+
+    <!-- E-Receipt Modal -->
+    <div id="receipt-modal" class="receipt-modal">
+        <div class="receipt-content">
+            <div id="receipt-capture-area">
+                <div class="receipt-header">
+                    <h2 style="margin:0;">RESIT RASMI (E-Resit)</h2>
+                    <p style="margin:5px 0 0; opacity:0.9;">SK Pulau Melayu Miri</p>
+                    <p style="margin:2px 0 0; font-size:0.8rem;" id="receipt-date">Tarikh: -</p>
+                    <p style="margin:2px 0 0; font-size:0.8rem; font-weight:bold;" id="receipt-id">No: -</p>
+                </div>
+                <div class="receipt-body">
+                    <div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
+                        <div><strong>Diterima Daripada:</strong> <span id="r-parent">-</span></div>
+                        <div><strong>Untuk Murid:</strong> <span id="r-student">-</span> (<span id="r-class">-</span>)</div>
+                        <div><strong>Kaedah:</strong> <span id="r-method">-</span></div>
+                    </div>
+                    
+                    <div id="r-items-list">
+                        <!-- Items go here -->
+                    </div>
+
+                    <div class="receipt-total">
+                        <span>JUMLAH</span>
+                        <span id="r-total">RM 0.00</span>
+                    </div>
+                    <div style="text-align:center; margin-top:20px; font-size:0.8rem; color:#888; font-style:italic;">
+                        Terima kasih. Resit ini cetakan komputer.<br>
+                        Sila simpan sebagai bukti.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="receipt-actions">
+                <button class="btn-wa" onclick="sendWhatsApp()">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.017-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                    Hantar Resit ke WhatsApp Ibu Bapa
+                </button>
+                <button class="btn-close" onclick="closeModal()">Tutup / Selesai</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyDrH9ySCZcWvn7GukRHk20-ig4SZpMvFk0", authDomain: "skpm2026-f308b.firebaseapp.com", projectId: "skpm2026-f308b", storageBucket: "skpm2026-f308b.firebasestorage.app", messagingSenderId: "806366483472", appId: "1:806366483472:web:94f5f73c071f50c58be695" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        signInAnonymously(auth);
+
+        // DATA YURAN (Perlu selari dengan admin.html/index.html)
+        const commonFees = [
+            { name: "Sumbangan PIBG", price: 30.00 },
+            { name: "Sumbangan Keceriaan Kelas", price: 10.00 },
+            { name: "Baju T-Sekolah (Lengan Pendek)", price: 35.00 },
+            { name: "Baju T-Sekolah (Lengan Panjang)", price: 40.00 },
+            { name: "Name Tag (1 set 3 keping)", price: 5.00 },
+            // Buku & Alat Tulis perlu diuruskan manual kerana harga variatif atau berdasarkan pakej
+            // Untuk guru, kita sediakan pilihan "Bayaran Buku" secara pukal atau manual
+            { name: "Bayaran Buku & Alat Tulis (Manual)", price: 0.00, manual: true } 
+        ];
+
+        let reservations = [];
+        let currentReceiptData = null;
+
+        // 1. Muat turun semua tempahan untuk autocomplete
+        async function loadReservations() {
+            try {
+                const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'skpm-default';
+                const querySnapshot = await getDocs(collection(db, 'artifacts', appIdStr, 'public', 'data', 'tempahan_2026'));
+                
+                const datalist = document.getElementById('student-list');
+                datalist.innerHTML = '';
+                reservations = [];
+
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    reservations.push(data);
+                    const option = document.createElement('option');
+                    option.value = data.nama_murid;
+                    option.text = `${data.kelas} - ${data.nama_murid}`;
+                    datalist.appendChild(option);
+                });
+            } catch (e) {
+                console.error("Gagal memuatkan senarai:", e);
+            }
+        }
+        loadReservations();
+
+        // 2. Cari Murid & Papar Borang
+        window.findStudent = function() {
+            const nameInput = document.getElementById('search-name').value.toUpperCase();
+            const loading = document.getElementById('loading-msg');
+            const form = document.getElementById('payment-form');
+            const parentDetails = document.getElementById('parent-details');
+            
+            loading.style.display = 'block';
+            
+            // Cari dalam data lokal
+            const found = reservations.find(r => r.nama_murid.toUpperCase() === nameInput);
+            
+            setTimeout(() => {
+                loading.style.display = 'none';
+                form.classList.remove('hidden');
+                parentDetails.classList.remove('hidden');
+
+                if (found) {
+                    // Jika jumpa, auto-fill
+                    mapClassToSelect(found.kelas);
+                    renderFeeList(found.senarai_item); // Pass pre-selected items
+                } else {
+                    // Jika tak jumpa, reset form untuk entry baru
+                    alert("Rekod tempahan tidak dijumpai. Sila isi manual.");
+                    document.getElementById('class-select').value = "";
+                    renderFeeList([]); 
+                }
+            }, 500);
+        }
+
+        // Helper: Map nama kelas sebenar ke kategori dropdown
+        function mapClassToSelect(className) {
+            const select = document.getElementById('class-select');
+            if(className.toLowerCase().includes('pra')) select.value = 'pra';
+            else if(['1','2','3'].some(n => className.includes(n))) select.value = 'tahap1';
+            else select.value = 'tahap2';
+            
+            // Trigger change event manually to refresh items if needed
+            renderFeeList();
+        }
+
+        // 3. Render Senarai Yuran
+        window.renderFeeList = function(preSelectedItems = []) {
+            const grade = document.getElementById('class-select').value;
+            const container = document.getElementById('fee-list-container');
+            container.innerHTML = '';
+
+            if(!grade) return;
+
+            commonFees.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'fee-item';
+                
+                // Check if this item was pre-selected in reservation
+                let isChecked = false;
+                let price = item.price;
+
+                if (preSelectedItems.length > 0) {
+                    const foundItem = preSelectedItems.find(pi => pi.item.includes(item.name) || (item.name.includes("Buku") && pi.item.includes("Buku")));
+                    if (foundItem) {
+                        isChecked = true;
+                        if(item.manual) price = foundItem.price; // Use booked price if manual item
+                    }
+                }
+
+                // Handling manual input price for Books/Alat Tulis
+                let priceHtml = `RM ${price.toFixed(2)}`;
+                let inputHtml = `<input type="checkbox" value="${price}" ${isChecked ? 'checked' : ''} onchange="calculateTotal()">`;
+                
+                if (item.manual) {
+                    priceHtml = `<input type="number" class="manual-price" value="${price}" step="0.01" style="width:100px; text-align:right;" onchange="updateCheckboxValue(this)">`;
+                    inputHtml = `<input type="checkbox" value="${price}" ${isChecked ? 'checked' : ''} onchange="calculateTotal()">`;
+                }
+
+                div.innerHTML = `
+                    <label class="fee-label">
+                        ${inputHtml}
+                        <span>${item.name}</span>
+                    </label>
+                    <div class="fee-price">${priceHtml}</div>
+                `;
+                container.appendChild(div);
+            });
+
+            calculateTotal();
+        }
+
+        // Update value checkbox bila input manual berubah
+        window.updateCheckboxValue = function(numInput) {
+            const wrapper = numInput.closest('.fee-item');
+            const checkbox = wrapper.querySelector('input[type="checkbox"]');
+            checkbox.value = numInput.value;
+            // Auto check bila guru masukkan harga
+            if(parseFloat(numInput.value) > 0) checkbox.checked = true;
+            calculateTotal();
+        }
+
+        window.calculateTotal = function() {
+            let total = 0;
+            document.querySelectorAll('#fee-list-container input[type="checkbox"]').forEach(box => {
+                if (box.checked) total += parseFloat(box.value);
+            });
+            document.getElementById('grand-total').innerText = "RM " + total.toFixed(2);
+        }
+
+        // 4. Proses Bayaran & Jana Resit
+        window.processPayment = async function() {
+            const studentName = document.getElementById('search-name').value;
+            const parentName = document.getElementById('parent-name').value;
+            const parentPhone = document.getElementById('parent-phone').value;
+            const method = document.getElementById('payment-method').value;
+            const classVal = document.getElementById('class-select').options[document.getElementById('class-select').selectedIndex].text;
+
+            if (!studentName || !parentName) return alert("Sila lengkapkan nama murid dan penjaga.");
+
+            // Kumpul item dibayar
+            const paidItems = [];
+            let totalAmount = 0;
+            document.querySelectorAll('#fee-list-container input[type="checkbox"]').forEach(box => {
+                if (box.checked) {
+                    const label = box.parentElement.querySelector('span').innerText;
+                    const price = parseFloat(box.value);
+                    paidItems.push({ item: label, price: price });
+                    totalAmount += price;
+                }
+            });
+
+            if (totalAmount === 0) return alert("Tiada item dipilih.");
+
+            const receiptId = "RESIT-" + Date.now().toString().slice(-6);
+            const dateStr = new Date().toLocaleString('ms-MY');
+
+            // Simpan ke Firebase (Collection: 'bayaran_2026')
+            try {
+                const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'skpm-default';
+                await addDoc(collection(db, 'artifacts', appIdStr, 'public', 'data', 'bayaran_2026'), {
+                    no_resit: receiptId,
+                    nama_murid: studentName,
+                    kelas: classVal,
+                    nama_penjaga: parentName,
+                    no_telefon: parentPhone,
+                    senarai_item: paidItems,
+                    jumlah_bayaran: totalAmount,
+                    kaedah: method,
+                    tarikh: new Date().toISOString()
+                });
+            } catch (e) {
+                console.error("Gagal simpan rekod", e);
+                // Teruskan jana resit walaupun DB fail (offline support sort of)
+            }
+
+            // Papar Modal Resit
+            document.getElementById('receipt-date').innerText = "Tarikh: " + dateStr;
+            document.getElementById('receipt-id').innerText = "No: " + receiptId;
+            document.getElementById('r-parent').innerText = parentName;
+            document.getElementById('r-student').innerText = studentName;
+            document.getElementById('r-class').innerText = classVal;
+            document.getElementById('r-method').innerText = method;
+            document.getElementById('r-total').innerText = "RM " + totalAmount.toFixed(2);
+
+            const listContainer = document.getElementById('r-items-list');
+            listContainer.innerHTML = '';
+            paidItems.forEach(i => {
+                listContainer.innerHTML += `<div class="receipt-item"><span>${i.item}</span><span>RM ${i.price.toFixed(2)}</span></div>`;
+            });
+
+            // Simpan data untuk WhatsApp
+            currentReceiptData = {
+                phone: parentPhone,
+                text: `*RESIT RASMI SK PULAU MELAYU MIRI*\nNo: ${receiptId}\nTarikh: ${dateStr}\n\nTerima kasih ${parentName},\nBayaran yuran untuk *${studentName}* (${classVal}) telah diterima.\n\nJumlah: *RM ${totalAmount.toFixed(2)}*\n\nSimpan resit ini sebagai rujukan.`
+            };
+
+            document.getElementById('receipt-modal').style.display = 'flex';
+        }
+
+        window.sendWhatsApp = function() {
+            if (!currentReceiptData || !currentReceiptData.phone) return alert("No telefon tidak dimasukkan.");
+            
+            // Format phone number (remove +, ensure 60 prefix)
+            let phone = currentReceiptData.phone.replace(/\D/g,'');
+            if(phone.startsWith('0')) phone = '6' + phone;
+            
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(currentReceiptData.text)}`;
+            window.open(url, '_blank');
+        }
+
+        window.closeModal = function() {
+            document.getElementById('receipt-modal').style.display = 'none';
+            // Optional: Reload page or clear form
+            if(confirm("Kosongkan borang untuk murid seterusnya?")) {
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
